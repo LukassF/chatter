@@ -1,14 +1,14 @@
-import { FC, FormEvent, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, FormEvent, useState, useEffect } from "react";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
 
-const Signup: FC = () => {
-  const [form, setForm] = useState<SignupData>();
+const Login: FC = () => {
+  const [form, setForm] = useState<LoginData>();
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setData, setError, setLoading, {
-    url: BACKEND_URL + "auth/signup",
+    url: BACKEND_URL + "auth/login",
     method: "POST",
     data: form,
     headers: {
@@ -16,18 +16,17 @@ const Signup: FC = () => {
     },
   });
 
-  const signUp = useCallback((e: FormEvent) => {
-    e.preventDefault();
-    const username = (e.target as any).username.value;
-    const email = (e.target as any).email.value;
-    const password = (e.target as any).password.value;
+  const logIn = useCallback((event: FormEvent) => {
+    event.preventDefault();
+    const username = (event.target as any).username.value;
+    const password = (event.target as any).password.value;
 
-    if (!username || !email || !password) {
+    if (!password || !username) {
       console.log("Fill in all fileds");
       return;
     }
 
-    setForm({ username, email, password });
+    setForm({ username, password });
   }, []);
 
   useEffect(() => {
@@ -36,15 +35,14 @@ const Signup: FC = () => {
 
   return (
     <>
-      <h3>Sign up below</h3>
-      <form onSubmit={signUp}>
+      <h3>Log in below</h3>
+      <form onSubmit={logIn}>
         <input type="text" placeholder="Username" name="username" />
-        <input type="email" placeholder="Email" name="email" />
         <input type="password" placeholder="Password" name="password" />
-        <button>Sign Up</button>
+        <button>Login</button>
       </form>
     </>
   );
 };
 
-export default Signup;
+export default Login;

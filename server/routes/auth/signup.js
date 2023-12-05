@@ -10,27 +10,19 @@ router.post("/", async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
-  if (!username || !email || !password) {
-    res.status(400).json({ error: "Fill in all fields" });
-    return;
-  }
+  if (!username || !email || !password)
+    return res.status(400).json({ error: "Fill in all fields" });
 
-  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-    res.status(400).json({ error: "Email is invalid" });
-    return;
-  }
+  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email))
+    return res.status(400).json({ error: "Email is invalid" });
 
   const takenEmail = await isEmailTaken(email);
-  if (takenEmail.data.length > 0) {
-    res.status(400).json({ error: "Email is taken" });
-    return;
-  }
+  if (takenEmail.data.length > 0)
+    return res.status(400).json({ error: "Email is taken" });
 
   const takenUsername = await isUsernameTaken(username);
-  if (takenUsername.data.length > 0) {
-    res.status(400).json({ error: "Username is taken" });
-    return;
-  }
+  if (takenUsername.data.length > 0)
+    return res.status(400).json({ error: "Username is taken" });
 
   const salt = await bcrypt.genSalt(10);
   const hashed_password = await bcrypt.hash(password, salt);
@@ -38,13 +30,6 @@ router.post("/", async (req, res) => {
   const insertion = await insertData(username, email, hashed_password);
   res.json(insertion);
 });
-
-// router.get("/:id", async (req, res) => {
-//   const id = req.params.id;
-//   const { data, error } = await supabase.from("clothes").select().eq("id", id);
-//   if (error) res.status(500).json(error);
-//   else res.json(data);
-// });
 
 const isEmailTaken = async (email) => {
   return await supabase.from("users").select().eq("email", email);

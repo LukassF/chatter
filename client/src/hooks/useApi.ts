@@ -11,7 +11,9 @@ const useApi = (params: AxiosRequestConfig<any>, run_immediately: boolean) => {
     try {
       let data = await axios.request(params);
       setData(data);
+      console.log(data);
     } catch (err: any) {
+      console.log(err);
       setError(err);
     } finally {
       setLoading(false);
