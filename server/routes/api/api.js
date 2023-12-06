@@ -3,8 +3,37 @@ const router = express.Router();
 require("dotenv/config");
 const supabase = require("../../utils/supabase");
 
-router.get("/users", (req, res) => {
-  res.json(req.user);
+router.get("/users", async (req, res) => {
+  const input = req.query.input;
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id,username,email")
+      .or(`username.ilike.%${input}%, email.ilike.%${input}%`)
+      .not("id", "eq", req.user.user.id)
+      .limit(5);
+
+    if (error || data.length === 0) throw new Error(error);
+
+    return res.json(data);
+  } catch (err) {
+    return res.status(400).json({ error: "Could not find users" });
+  }
+});
+
+router.get("/getchats", async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("chats")
+      .select()
+      .overlaps("user_ids", [req.user.user.id]);
+
+    if (error || data.length === 0) throw new Error(error);
+
+    res.json(data);
+  } catch (err) {
+    return res.status(400).json({ error: "Could not get chats" });
+  }
 });
 
 // router.post("/", async (req, res) => {
