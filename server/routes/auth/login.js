@@ -52,7 +52,7 @@ const generateAccessToken = (user) => {
       email: user.email,
     },
   };
-  return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "20m" });
+  return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "10m" });
 };
 
 const generateRefreshToken = (user) => {

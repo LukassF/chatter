@@ -1,48 +1,46 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
+import { BACKEND_URL } from "./constants";
 
 export const fetchApi = (
   setData: React.Dispatch<React.SetStateAction<any>>,
   setError: React.Dispatch<React.SetStateAction<any>>,
-  setLoading: React.Dispatch<React.SetStateAction<any>>,
-  params: AxiosRequestConfig<any>
+  setLoading: React.Dispatch<React.SetStateAction<any>>
 ): Function => {
   //return a function to use at any time in a component
-  return async () => {
-    // let axs = axios;
+  return async (params: AxiosRequestConfig<any>) => {
+    //automatic token refresh
+    if (params.url?.includes("api")) {
+      let current_date = new Date();
 
-    // if (params.url?.includes("api")) {
-    //   const axiosJWT = axios.create();
+      const token =
+        params.headers && params.headers["Authorization"].split(" ")[1];
+      if (!token) throw new Error("No token provided");
 
-    //   axiosJWT.interceptors.request.use(
-    //     async (config) => {
-    //       let current_date = new Date();
+      let decoded_token = jwtDecode(token);
+      if (decoded_token.exp! * 1000 < current_date.getTime()) {
+        const token_from_ls = window.localStorage.getItem("refresh_token");
+        const refresh_token = token_from_ls && JSON.parse(token_from_ls);
 
-    //       const token = config.headers && config.headers["authorization"];
-    //       if (!token) throw new Error("No token provided");
+        const { data } = await axios.post(BACKEND_URL + "auth/refresh", {
+          refresh_token,
+        });
 
-    //       let decoded_token = jwtDecode(token);
-    //       if (
-    //         decoded_token.exp! * 1000 < current_date.getTime()
-    //       ) {
-    //         const data = await
+        params.headers!["Authorization"] = "Bearer " + data.access_token;
 
-    //       }
+        window.localStorage.setItem(
+          "access_token",
+          JSON.stringify(data.access_token)
+        );
+      }
+    }
 
-    //       return config;
-    //     },
-    //     (error) => {
-    //       return Promise.reject(error);
-    //     }
-    //   );
-    // }
     setLoading(true);
     try {
       let data = await axios.request(params);
       setData(data);
       console.log(data);
     } catch (err: any) {
-      console.log(err);
       setError(err);
     } finally {
       setLoading(false);

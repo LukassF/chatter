@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const supabase = require("../../utils/supabase");
 
 router.post("/", async (req, res) => {
-  const refresh_token = req.body.token;
+  const refresh_token = req.body.refresh_token;
 
   if (!refresh_token)
     return res.status(401).json({ error: "You are not authorized" });
@@ -39,7 +39,7 @@ const generateAccessToken = (user) => {
       email: user.email,
     },
   };
-  return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "20m" });
+  return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "10m" });
 };
 
 module.exports = router;

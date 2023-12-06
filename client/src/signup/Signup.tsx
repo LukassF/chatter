@@ -7,14 +7,7 @@ const Signup: FC = () => {
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const fetchData = fetchApi(setData, setError, setLoading, {
-    url: BACKEND_URL + "auth/signup",
-    method: "POST",
-    data: form,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const fetchData = fetchApi(setData, setError, setLoading);
 
   const signUp = useCallback((e: FormEvent) => {
     e.preventDefault();
@@ -31,7 +24,15 @@ const Signup: FC = () => {
   }, []);
 
   useEffect(() => {
-    if (form) fetchData();
+    if (form)
+      fetchData({
+        url: BACKEND_URL + "auth/signup",
+        method: "POST",
+        data: form,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
   }, [form]);
 
   return (

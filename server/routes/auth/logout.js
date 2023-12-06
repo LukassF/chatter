@@ -4,7 +4,7 @@ require("dotenv/config");
 const supabase = require("../../utils/supabase");
 
 router.post("/", async (req, res) => {
-  const refresh_token = req.body.token;
+  const refresh_token = req.body.refresh_token;
 
   const error = await deleteFromDb(refresh_token);
 
@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 const deleteFromDb = async (refresh_token) => {
   try {
     const { error } = await supabase
-      .from("refresh_token")
+      .from("refresh_tokens")
       .delete()
       .eq("refresh_token", refresh_token);
 
