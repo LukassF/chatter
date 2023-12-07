@@ -12,15 +12,11 @@ import CreateChat from "./chats/CreateChat";
 function App() {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
+  const access_token = useAppSelector((state) => state.tokens.access_token);
 
   useLayoutEffect(() => {
-    const token_str = window.localStorage.getItem("access_token");
-    const token = token_str ? JSON.parse(token_str) : null;
-
-    if (token) {
-      const user = decodeToken(token);
-      dispatch(setCurrentUser(user));
-    }
+    const user = decodeToken(access_token);
+    dispatch(setCurrentUser(user));
   }, []);
 
   return (
@@ -29,12 +25,12 @@ function App() {
       <hr></hr>
       <Login />
 
-      <div>{current_user.username}</div>
+      <div>{current_user?.username}</div>
 
       {/* <MessageLog />
       <MessageInput /> */}
-      <CreateChat />
-      <Chats />
+      {current_user && <CreateChat />}
+      {current_user && <Chats />}
     </>
   );
 }

@@ -2,12 +2,19 @@ import { FC, useCallback, FormEvent, useState, useEffect } from "react";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
 import { LoginData } from "../utils/types";
-import { useAppDispatch } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { setCurrentUser } from "../store/features/currentUserSlice";
 import { decodeToken } from "../utils/decodeToken";
+import {
+  deleteTokens,
+  setAccessToken,
+  setRefreshToken,
+} from "../store/features/tokensSlice";
 
 const Login: FC = () => {
   const dispatch = useAppDispatch();
+  const access_token = useAppSelector((state) => state.tokens.access_token);
+
   const [form, setForm] = useState<LoginData>();
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
@@ -41,8 +48,8 @@ const Login: FC = () => {
       },
     });
 
-    window.localStorage.removeItem("refresh_token");
-    window.localStorage.removeItem("access_token");
+    dispatch(deleteTokens());
+    window.location.reload();
   }, []);
 
   useEffect(() => {
@@ -59,15 +66,11 @@ const Login: FC = () => {
 
   useEffect(() => {
     if (data) {
-      const access_token = data.data.access_token;
-      const user = decodeToken(access_token);
-      dispatch(setCurrentUser(user));
+      dispatch(setAccessToken(data.data.access_token));
+      dispatch(setRefreshToken(data.data.refresh_token));
 
-      window.localStorage.setItem("access_token", JSON.stringify(access_token));
-      window.localStorage.setItem(
-        "refresh_token",
-        JSON.stringify(data.data.refresh_token)
-      );
+      const user = decodeToken(data.data.access_token);
+      dispatch(setCurrentUser(user));
     }
   }, [data]);
 
