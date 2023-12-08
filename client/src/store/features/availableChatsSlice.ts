@@ -51,7 +51,6 @@ export const availableChatsSlice = createSlice({
     },
 
     addMessages: (state, action: PayloadAction<Message>) => {
-      console.log(action.payload);
       state.messages?.push(action.payload);
     },
   },

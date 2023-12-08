@@ -14,21 +14,6 @@ const MessageInput = () => {
 
   //
 
-  const ws = new WebSocket(WEBSOCKET_URL);
-
-  ws.onmessage = (msg) => {
-    const data = typeof msg.data == "string" && JSON.parse(msg.data);
-
-    if (data.content && data.chat_id === selected_chat?.id)
-      dispatch(addMessages(data));
-  };
-
-  ws.onopen = () => {
-    return;
-  };
-
-  //
-
   const [payload, setPayload] = useState<Record<string, any>>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
@@ -69,7 +54,14 @@ const MessageInput = () => {
   }, [payload, access_token]);
 
   useEffect(() => {
-    ws.close();
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    ws.onmessage = (msg) => {
+      const data = typeof msg.data == "string" && JSON.parse(msg.data);
+
+      if (data.content && data.chat_id === selected_chat?.id)
+        dispatch(addMessages(data));
+    };
     if (success && inputRef.current) {
       inputRef.current!.value = "";
       ws.onopen = () => {
