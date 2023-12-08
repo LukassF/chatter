@@ -6,6 +6,7 @@ import {
   Chat,
   addChats,
   setChats,
+  setSelectedChat,
 } from "../store/features/availableChatsSlice";
 
 const Chats = () => {
@@ -41,7 +42,7 @@ const Chats = () => {
       <h2>Available chats</h2>
       {available_chats ? (
         available_chats.map((item: Chat, index: number) => (
-          <div key={index}>
+          <div key={index} onClick={() => dispatch(setSelectedChat(item))}>
             {item.name}
             <ul>
               {item.users?.map((user, id: number) => (

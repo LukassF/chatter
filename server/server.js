@@ -5,6 +5,17 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 app.use(cors());
 
+const websocket = require("express-ws")(app);
+
+app.ws("/api/messages/update", (ws, req) => {
+  ws.on("message", function (msg) {
+    Array.from(websocket.getWss().clients).forEach(function (client) {
+      console.log(msg);
+      client.send(msg);
+    });
+  });
+});
+
 const port = process.env.PORT || "5000";
 
 app.use(bodyParser.urlencoded({ extended: true }));

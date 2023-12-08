@@ -13,6 +13,9 @@ function App() {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const access_token = useAppSelector((state) => state.tokens.access_token);
+  const selected_chat = useAppSelector(
+    (state) => state.available_chats.selected_chat
+  );
 
   useLayoutEffect(() => {
     const user = decodeToken(access_token);
@@ -27,10 +30,15 @@ function App() {
 
       <div>{current_user?.username}</div>
 
-      {/* <MessageLog />
-      <MessageInput /> */}
       {current_user && <CreateChat />}
       {current_user && <Chats />}
+
+      {selected_chat && (
+        <div>
+          <MessageLog />
+          <MessageInput />
+        </div>
+      )}
     </>
   );
 }

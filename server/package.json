@@ -18,6 +18,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-ws": "^5.0.2",
+    "express-ws-routes": "^1.1.0",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {

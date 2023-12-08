@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { Message } from "../../utils/types";
 
 interface ChatMember {
   id: number | null;
@@ -16,10 +17,14 @@ export interface Chat {
 
 interface ChatState {
   chats: Chat[];
+  selected_chat: Chat | undefined;
+  messages: Message[] | undefined;
 }
 
 const initialState: ChatState = {
   chats: [],
+  selected_chat: undefined,
+  messages: undefined,
 };
 
 export const availableChatsSlice = createSlice({
@@ -36,8 +41,22 @@ export const availableChatsSlice = createSlice({
     setChats: (state, action: PayloadAction<Chat[]>) => {
       state.chats = action.payload;
     },
+
+    setSelectedChat: (state, action: PayloadAction<Chat>) => {
+      state.selected_chat = action.payload;
+    },
+
+    setMessages: (state, action: PayloadAction<Message[]>) => {
+      state.messages = action.payload;
+    },
+
+    addMessages: (state, action: PayloadAction<Message>) => {
+      console.log(action.payload);
+      state.messages?.push(action.payload);
+    },
   },
 });
 
 export default availableChatsSlice.reducer;
-export const { addChats, setChats } = availableChatsSlice.actions;
+export const { addChats, setChats, setSelectedChat, setMessages, addMessages } =
+  availableChatsSlice.actions;

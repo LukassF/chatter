@@ -12,3 +12,12 @@ type LoginData = Omit<SignupData, "email">;
 interface TokenDecode extends JwtPayload {
   user: User;
 }
+
+interface Message {
+  content: string;
+  user_id: number;
+  chat_id: number;
+  image: string | null;
+  created_at: string;
+  id: number;
+}

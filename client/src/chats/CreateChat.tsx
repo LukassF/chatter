@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import FoundUsersList from "./foundUsersList";
+import FoundUsersList from "./FoundUsersList";
 import { useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
