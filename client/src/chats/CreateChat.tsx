@@ -51,6 +51,7 @@ const CreateChat = () => {
     ws.onmessage = (msg) => {
       const data = typeof msg.data == "string" && JSON.parse(msg.data);
       if (
+        data.users &&
         data.users.length > 1 &&
         data.name &&
         data.users.find((val: User) => val.id === current_user?.id)

@@ -1,6 +1,7 @@
 import { FC, FormEvent, useCallback, useEffect, useState } from "react";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
+import { SignupData } from "../utils/types";
 
 const Signup: FC = () => {
   const [form, setForm] = useState<SignupData>();
@@ -15,10 +16,11 @@ const Signup: FC = () => {
     const email = (e.target as any).email.value;
     const password = (e.target as any).password.value;
 
-    if (!username || !email || !password) {
-      console.log("Fill in all fileds");
-      return;
-    }
+    if (!username || !email || !password)
+      return console.log("Fill in all fileds");
+
+    if (password.length < 6)
+      return console.log("Password has to be at least 6 characters long");
 
     setForm({ username, email, password });
   }, []);

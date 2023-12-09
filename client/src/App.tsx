@@ -2,12 +2,13 @@ import Login from "./login/Login";
 import Signup from "./signup/Signup";
 import { useLayoutEffect } from "react";
 import { useAppDispatch, useAppSelector } from "./store/store";
-import { setCurrentUser } from "./store/features/currentUserSlice";
+import { fetchImage, setCurrentUser } from "./store/features/currentUserSlice";
 import { decodeToken } from "./utils/decodeToken";
 import MessageLog from "./chatbox/MessageLog";
 import MessageInput from "./chatbox/MessageInput";
 import Chats from "./chats/Chats";
 import CreateChat from "./chats/CreateChat";
+import ModifyProfile from "./profile/ModifyProfile";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -19,7 +20,7 @@ function App() {
 
   useLayoutEffect(() => {
     const user = decodeToken(access_token);
-    dispatch(setCurrentUser(user));
+    if (user) dispatch(fetchImage(user));
   }, []);
 
   return (
@@ -28,8 +29,34 @@ function App() {
       <hr></hr>
       <Login />
 
-      <div>{current_user?.username}</div>
-
+      <hr></hr>
+      <ModifyProfile />
+      <hr></hr>
+      {current_user?.id && (
+        <div>
+          {current_user?.username}
+          <div
+            style={{
+              width: "50px",
+              height: "50px",
+              borderRadius: "50%",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            <img
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              src={
+                current_user.image
+                  ? current_user.image
+                  : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+              }
+              alt=""
+            />
+          </div>
+        </div>
+      )}
+      <hr></hr>
       {current_user && <CreateChat />}
       {current_user && <Chats />}
 

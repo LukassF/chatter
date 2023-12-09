@@ -49,6 +49,25 @@ const FoundUsersList = ({
               key={index}
               onClick={() => addUser(item)}
             >
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
+                <img
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  src={
+                    item.image
+                      ? item.image
+                      : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                  }
+                  alt=""
+                />
+              </div>
               {item.username}
             </div>
           ))

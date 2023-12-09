@@ -3,7 +3,7 @@ import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
 import { LoginData } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../store/store";
-import { setCurrentUser } from "../store/features/currentUserSlice";
+import { fetchImage, setCurrentUser } from "../store/features/currentUserSlice";
 import { decodeToken } from "../utils/decodeToken";
 import {
   deleteTokens,
@@ -70,7 +70,7 @@ const Login: FC = () => {
       dispatch(setRefreshToken(data.data.refresh_token));
 
       const user = decodeToken(data.data.access_token);
-      dispatch(setCurrentUser(user));
+      if (user) dispatch(fetchImage(user));
     }
   }, [data]);
 

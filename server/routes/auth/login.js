@@ -50,6 +50,7 @@ const generateAccessToken = (user) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      image: user.image,
     },
   };
   return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "10m" });
@@ -61,6 +62,7 @@ const generateRefreshToken = (user) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      image: user.image,
     },
   };
   return jwt.sign(token_data, process.env.REFRESH_SECRET, { expiresIn: "6h" });
@@ -93,5 +95,13 @@ const deleteExistingRefreshToken = async (user_id) => {
     return err;
   }
 };
+
+// const getBase64 = (image) => {
+//   const r_path = path.resolve("routes/api/users/profile_images");
+//   const data = fs.readFileSync(`${r_path}\\${image}`);
+//   const extension = image.split(".")[1];
+//   const base64 = data.toString("base64");
+//   return "data:image/" + extension + ";base64," + base64;
+// };
 
 module.exports = router;

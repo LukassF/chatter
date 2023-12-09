@@ -10,7 +10,6 @@ const websocket = require("express-ws")(app);
 app.ws("/api/messages/update", (ws, req) => {
   ws.on("message", function (msg) {
     Array.from(websocket.getWss().clients).forEach(function (client) {
-      console.log(msg);
       client.send(msg);
     });
   });
@@ -18,8 +17,8 @@ app.ws("/api/messages/update", (ws, req) => {
 
 const port = process.env.PORT || "5000";
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
+app.use(bodyParser.json({ limit: "50mb" }));
 
 const signup_router = require("./routes/auth/signup");
 app.use("/auth/signup", signup_router);

@@ -10,6 +10,10 @@ export const store = configureStore({
     available_chats: availableChatsSlice.reducer,
     tokens: tokenSlice.reducer,
   }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export const useAppDispatch: () => typeof store.dispatch = useDispatch;
