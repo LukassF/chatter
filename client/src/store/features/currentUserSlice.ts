@@ -5,6 +5,7 @@ export interface User {
   id: number | null;
   username: string | null;
   email: string | null;
+  image: string | null;
 }
 
 interface UserState {
@@ -12,7 +13,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  user: { id: null, username: null, email: null },
+  user: { id: null, username: null, email: null, image: null },
 };
 
 // export const fetchContent = createAsyncThunk("fetch", async () => {

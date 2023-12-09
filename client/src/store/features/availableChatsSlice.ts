@@ -35,7 +35,7 @@ export const availableChatsSlice = createSlice({
       state.chats = state.chats.filter(
         (item) => !action.payload.find((val) => val.id == item.id)
       );
-      state.chats = [...state.chats, ...action.payload];
+      state.chats = [...action.payload, ...state.chats];
     },
 
     setChats: (state, action: PayloadAction<Chat[]>) => {

@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect } from "react";
 import FoundUsersList from "./FoundUsersList";
-import { useAppSelector } from "../store/store";
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL } from "../utils/api/constants";
+import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
+import { addChats } from "../store/features/availableChatsSlice";
+import { User } from "../store/features/currentUserSlice";
 
 const CreateChat = () => {
+  const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const access_token = useAppSelector((state) => state.tokens.access_token);
 
@@ -43,7 +46,32 @@ const CreateChat = () => {
   }, [payload]);
 
   useEffect(() => {
-    if (success) window.location.reload();
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    ws.onmessage = (msg) => {
+      const data = typeof msg.data == "string" && JSON.parse(msg.data);
+      if (
+        data.users.length > 1 &&
+        data.name &&
+        data.users.find((val: User) => val.id === current_user?.id)
+      )
+        dispatch(addChats([data]));
+    };
+    if (success) {
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            id: Math.random(),
+            name: payload?.name,
+            users: [...selectedUsers, current_user],
+            image: null,
+            created_at: new Date(),
+          })
+        );
+      };
+    }
+
+    return () => ws.close();
   }, [success]);
 
   return (
