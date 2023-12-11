@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { ALLOWED_TYPES, BACKEND_URL } from "../utils/api/constants";
+import { toBase64 } from "../utils/api/toBase64";
 
 const ModifyProfile = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
@@ -37,31 +38,16 @@ const ModifyProfile = () => {
         base64 = await toBase64(image);
       }
 
-      console.log(base64);
-
       setPayload({ user_id: current_user?.id, base64, username, password });
     },
     [current_user]
-  );
-
-  const toBase64 = useCallback(
-    (file: File): Promise<string | ArrayBuffer | null> => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject("Error while converting to base64");
-      });
-    },
-    []
   );
 
   useEffect(() => {
     if (access_token && payload)
       fetchData({
         url: BACKEND_URL + "api/users/modify",
-        method: "POST",
+        method: "PUT",
         data: payload,
         headers: {
           Authorization: "Bearer " + access_token,

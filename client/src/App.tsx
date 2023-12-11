@@ -9,6 +9,7 @@ import MessageInput from "./chatbox/MessageInput";
 import Chats from "./chats/Chats";
 import CreateChat from "./chats/CreateChat";
 import ModifyProfile from "./profile/ModifyProfile";
+import ChatSettings from "./chatbox/settings/ChatSettings";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,9 @@ function App() {
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
+  );
+  const settings_open = useAppSelector(
+    (state) => state.available_chats.settings_open
   );
 
   useLayoutEffect(() => {
@@ -61,9 +65,12 @@ function App() {
       {current_user && <Chats />}
 
       {selected_chat && (
-        <div>
-          <MessageLog />
-          <MessageInput />
+        <div style={{ display: "flex" }}>
+          <div>
+            <MessageLog />
+            <MessageInput />
+          </div>
+          {settings_open && <ChatSettings />}
         </div>
       )}
     </>

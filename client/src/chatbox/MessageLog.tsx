@@ -2,7 +2,11 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
-import { setMessages } from "../store/features/availableChatsSlice";
+import {
+  setMessages,
+  setSelectedChat,
+  toggleSettings,
+} from "../store/features/availableChatsSlice";
 
 const MessageLog = () => {
   const dispatch = useAppDispatch();
@@ -14,6 +18,9 @@ const MessageLog = () => {
 
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
+  );
+  const available_chats = useAppSelector(
+    (state) => state.available_chats.chats
   );
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const current_user = useAppSelector((state) => state.current_user.user);
@@ -30,12 +37,26 @@ const MessageLog = () => {
   }, [selected_chat, access_token]);
 
   useEffect(() => {
-    if (msg_res) dispatch(setMessages(msg_res.data));
+    if (msg_res && !error) dispatch(setMessages(msg_res.data));
+    if (error) dispatch(setMessages([]));
   }, [msg_res]);
+
+  useEffect(() => {
+    if (!available_chats.find((item) => item.id == selected_chat?.id))
+      dispatch(setSelectedChat(undefined));
+  }, [available_chats, selected_chat]);
 
   return (
     <div style={{ background: "lightgrey", width: "200px", height: "300px" }}>
-      <h4>{selected_chat?.name}</h4>
+      <span style={{ display: "flex", justifyContent: "space-between" }}>
+        <h4 style={{ margin: 0 }}>{selected_chat?.name}</h4>
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => dispatch(toggleSettings(true))}
+        >
+          settings
+        </span>
+      </span>
       <hr></hr>
       <div
         style={{

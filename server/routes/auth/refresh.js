@@ -16,11 +16,12 @@ router.post("/", async (req, res) => {
     return res.status(403).json({ error: "Invalid token" });
 
   jwt.verify(refresh_token, process.env.REFRESH_SECRET, (err, data) => {
-    err && res.status(403).json({ error: "Invalid token" });
+    if (err || !data)
+      return res.status(403).json({ error: "Invalid refresh token" });
 
     const access_token = generateAccessToken(data.user);
 
-    res.status(200).json({ access_token });
+    return res.status(200).json({ access_token });
   });
 });
 
@@ -37,6 +38,7 @@ const generateAccessToken = (user) => {
       id: user.id,
       username: user.username,
       email: user.email,
+      image: user.image,
     },
   };
   return jwt.sign(token_data, process.env.JWT_SECRET, { expiresIn: "10m" });

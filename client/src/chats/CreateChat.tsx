@@ -1,10 +1,14 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef, FormEvent } from "react";
 import FoundUsersList from "./FoundUsersList";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
-import { addChats } from "../store/features/availableChatsSlice";
+import {
+  addChats,
+  triggerChatReload,
+} from "../store/features/availableChatsSlice";
 import { User } from "../store/features/currentUserSlice";
+import { toBase64 } from "../utils/api/toBase64";
 
 const CreateChat = () => {
   const dispatch = useAppDispatch();
@@ -12,26 +16,36 @@ const CreateChat = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
 
   //
+  const fileInput = useRef<HTMLInputElement>(null);
   const [input, setInput] = useState<string>();
   const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
-  const [name, setName] = useState<string>("");
   const [payload, setPayload] = useState<Record<string, any>>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
-  const createChat = useCallback(() => {
-    if (!selectedUsers || selectedUsers.length === 0)
-      return console.log("Select at least one user");
+  const createChat = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
+      const name = (e.target as any).name.value;
+      const image = (e.target as any).image.files[0] as File;
 
-    if (!name) return console.log("Your chat has to have a name");
+      if (!selectedUsers || selectedUsers.length === 0)
+        return console.log("Select at least one user");
 
-    const users = selectedUsers.map((item) => item.id);
-    users.push(current_user?.id);
+      if (!name) return console.log("Your chat has to have a name");
 
-    setPayload({ name, users });
-  }, [selectedUsers, name]);
+      let base64;
+      if (image) base64 = await toBase64(image);
+
+      const users = selectedUsers.map((item) => item.id);
+      users.push(current_user?.id);
+
+      setPayload({ name, users, base64 });
+    },
+    [selectedUsers]
+  );
 
   useEffect(() => {
     if (access_token && payload)
@@ -48,25 +62,12 @@ const CreateChat = () => {
   useEffect(() => {
     const ws = new WebSocket(WEBSOCKET_URL);
 
-    ws.onmessage = (msg) => {
-      const data = typeof msg.data == "string" && JSON.parse(msg.data);
-      if (
-        data.users &&
-        data.users.length > 1 &&
-        data.name &&
-        data.users.find((val: User) => val.id === current_user?.id)
-      )
-        dispatch(addChats([data]));
-    };
     if (success) {
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
-            id: Math.random(),
-            name: payload?.name,
             users: [...selectedUsers, current_user],
-            image: null,
-            created_at: new Date(),
+            type: "chat",
           })
         );
       };
@@ -78,24 +79,32 @@ const CreateChat = () => {
   return (
     <>
       <h2>Create chat</h2>
-      <h4>Find users</h4>
-      <input
-        type="text"
-        placeholder="find"
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="name"
-        onChange={(e) => setName(e.target.value)}
-      />
-      <FoundUsersList input={input} setUsers={setSelectedUsers} />
-      {selectedUsers &&
-        selectedUsers.map((item: any, index: number) => (
-          <div key={index}>{item.username}</div>
-        ))}
+      <form onSubmit={createChat}>
+        <h4>Find users</h4>
+        <input
+          type="text"
+          placeholder="find"
+          onChange={(e) => setInput(e.target.value)}
+        />
+        <input type="text" placeholder="name" name="name" />
+        <input
+          type="file"
+          placeholder="image"
+          name="image"
+          ref={fileInput}
+          style={{ display: "none" }}
+        ></input>
+        <button type="button" onClick={() => fileInput.current?.click()}>
+          Select image
+        </button>
+        <FoundUsersList input={input} setUsers={setSelectedUsers} />
+        {selectedUsers &&
+          selectedUsers.map((item: any, index: number) => (
+            <div key={index}>{item.username}</div>
+          ))}
 
-      <button onClick={createChat}>Create</button>
+        <button>Create</button>
+      </form>
     </>
   );
 };

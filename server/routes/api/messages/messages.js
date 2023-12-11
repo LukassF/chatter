@@ -9,11 +9,20 @@ router.post("/send", async (req, res) => {
   try {
     if (!message || !user_id || !chat_id) throw new Error("Fields are empty");
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("messages")
-      .insert({ content: message, user_id, chat_id });
+      .insert({ content: message, user_id, chat_id })
+      .select();
 
     if (error) throw new Error(error);
+
+    const message_id = data[0].id;
+    let chat_update = await supabase
+      .from("chats")
+      .update({ last_message: message_id })
+      .eq("id", chat_id);
+
+    if (chat_update.error) throw new Error("Could not update chats");
 
     return res.status(200).json({ success: "Message sent successfully" });
   } catch (err) {
