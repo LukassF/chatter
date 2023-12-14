@@ -124,6 +124,7 @@ export const availableChatsSlice = createSlice({
       element.message = action.payload.message;
       element.message_created_at = action.payload.created_at;
       element.message_user_id = action.payload.user_id;
+      element.last_message_id = action.payload.id;
 
       state.chats = [
         element,

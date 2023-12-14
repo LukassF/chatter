@@ -6,7 +6,9 @@ import {
   Chat,
   addChats,
   addMessages,
+  pushToTop,
   setChats,
+  setLastMessage,
   setSelectedChat,
   setUserHasSeen,
   triggerChatReload,
@@ -64,15 +66,26 @@ const Chats = () => {
       else if (data.type == "message") {
         dispatch(addMessages(data));
         //TO IMPLEMENT no chat reload but push to top and so on last message bla bla
+        // dispatch(
+        //   setLastMessage({
+        //     chat_id: data.chat_id,
+        //     user_id: data.user_id,
+        //     content: data.content,
+        //     id: data.id,
+        //     created_at: data.created_at,
+        //   })
+        // );
+        // dispatch(pushToTop(data.chat_id));
         dispatch(triggerChatReload());
       } else if (data.type == "hasseen") {
-        dispatch(
-          setUserHasSeen({
-            user_id: data.user_id,
-            chat_id: data.chat_id,
-            last_msg_id: data.last_msg_id,
-          })
-        );
+        dispatch(triggerChatReload());
+        // dispatch(
+        //   setUserHasSeen({
+        //     user_id: data.user_id,
+        //     chat_id: data.chat_id,
+        //     last_msg_id: data.last_msg_id,
+        //   })
+        // );
       }
     };
 

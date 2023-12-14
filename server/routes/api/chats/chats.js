@@ -111,15 +111,22 @@ router.post("/createchat", async (req, res) => {
     if (!name || !users || users.length < 2)
       throw new Error("Insufficient paramters");
 
-    let create_object = { name, user_ids: users };
+    let create_object = { name, user_ids: users, image: null };
 
     if (base64) {
       const path = await fileSaving.writeToFile(COVER_IMAGES, base64);
       create_object.image = path;
     }
 
-    const { error } = await supabase.from("chats").insert(create_object);
+    const have_seen = Array(users.length).fill(null);
+    create_object.have_seen = have_seen;
 
+    create_object.content = "New chat created.";
+
+    const { data, error } = await supabase.rpc(
+      "create_chat_and_message",
+      create_object
+    );
     if (error) throw new Error(error);
 
     return res.status(200).json({ success: "Chat created" });
@@ -176,7 +183,7 @@ router.patch("/toggleseen/:user_id", async (req, res) => {
 
     const chat_update = await supabase.rpc("update_seen_value", {
       chat_id: chat_id,
-      index: curr_user_idx,
+      index: curr_user_idx + 1,
       new_value: last_message,
     });
 

@@ -53,7 +53,14 @@ const MessageLog = () => {
   }, [messages]);
 
   return (
-    <div style={{ background: "lightgrey", width: "200px", height: "300px" }}>
+    <div
+      style={{
+        background: "lightgrey",
+        width: "200px",
+        height: "300px",
+        overflow: "auto",
+      }}
+    >
       <span style={{ display: "flex", justifyContent: "space-between" }}>
         <h4 style={{ margin: 0 }}>{selected_chat?.name}</h4>
         <span
