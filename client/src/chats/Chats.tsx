@@ -110,7 +110,7 @@ const Chats = () => {
               display: "flex",
               background:
                 determineUser(current_user?.id!, item.users)?.has_seen !==
-                item.last_message_id
+                  item.last_message_id && selected_chat?.id != item.id
                   ? "grey"
                   : "transparent",
             }}
@@ -142,8 +142,11 @@ const Chats = () => {
               <h4 style={{ margin: 0 }}>{item.name}</h4>
               {item.message && (
                 <div>
-                  {determineUser(item.message_user_id, item.users)?.username}:
-                  {item.message}
+                  {determineUser(item.message_user_id, item.users)?.id ===
+                  current_user?.id
+                    ? "You"
+                    : determineUser(item.message_user_id, item.users)?.username}
+                  :{item.message}
                 </div>
               )}
             </div>

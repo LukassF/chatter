@@ -2,16 +2,26 @@ const express = require("express");
 const router = express.Router();
 require("dotenv/config");
 const supabase = require("../../../utils/supabase");
+const fileSaving = require("../../../utils/fileSaving");
+
+const MESSAGE_IMAGES = __dirname + "\\message_images";
 
 router.post("/send", async (req, res) => {
-  const { message, user_id, chat_id } = req.body;
+  const { message, user_id, chat_id, image } = req.body;
 
   try {
     if (!message || !user_id || !chat_id) throw new Error("Fields are empty");
 
+    let insert_object = { content: message, user_id, chat_id };
+
+    if (image) {
+      const path = await fileSaving.writeToFile(MESSAGE_IMAGES, image);
+      insert_object.image = path;
+    }
+
     const { data, error } = await supabase
       .from("messages")
-      .insert({ content: message, user_id, chat_id })
+      .insert(insert_object)
       .select();
 
     if (error) throw new Error(error);
@@ -43,6 +53,13 @@ router.get("/getall", async (req, res) => {
       .eq("chat_id", chat_id);
 
     if (error) throw new Error(error);
+
+    data.forEach((msg) => {
+      if (msg.image) {
+        let base64 = fileSaving.getBase64(MESSAGE_IMAGES, msg.image);
+        msg.image = base64;
+      }
+    });
 
     res.status(200).json(data);
   } catch (err) {

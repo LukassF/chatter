@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
@@ -12,11 +12,6 @@ import {
 const MessageLog = () => {
   const dispatch = useAppDispatch();
   const messages = useAppSelector((state) => state.available_chats.messages);
-  const [msg_res, setMsgRes] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const fetchData = fetchApi(setMsgRes, setError, setLoading);
-
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
   );
@@ -25,6 +20,13 @@ const MessageLog = () => {
   );
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const current_user = useAppSelector((state) => state.current_user.user);
+
+  const [msg_res, setMsgRes] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchData = fetchApi(setMsgRes, setError, setLoading);
+
+  const chat_end_ref = useRef<HTMLElement>(null);
 
   useLayoutEffect(() => {
     if (access_token)
@@ -52,12 +54,16 @@ const MessageLog = () => {
       dispatch(setLastSeenMessage(messages[messages.length - 1]?.id));
   }, [messages]);
 
+  useEffect(() => {
+    if (chat_end_ref.current) chat_end_ref.current.scrollIntoView();
+  }, [chat_end_ref, messages]);
+
   return (
     <div
       style={{
         background: "lightgrey",
-        width: "200px",
-        height: "300px",
+        width: "270px",
+        height: "320px",
         overflow: "auto",
       }}
     >
@@ -92,6 +98,25 @@ const MessageLog = () => {
                 fontSize: !item.user_id ? "10px" : "15px",
               }}
             >
+              {item.image && (
+                <div
+                  style={{
+                    height: "70px",
+                    width: "90px",
+                    position: "relative",
+                  }}
+                >
+                  <img
+                    src={item.image}
+                    alt="message_image"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              )}
               {item.content}
             </div>
           ))
@@ -99,6 +124,7 @@ const MessageLog = () => {
           <p>No messages yet</p>
         )}
       </div>
+      <span ref={chat_end_ref}></span>
     </div>
   );
 };

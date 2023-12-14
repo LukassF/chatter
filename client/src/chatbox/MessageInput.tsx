@@ -8,6 +8,7 @@ import {
   setLastMessage,
   triggerChatReload,
 } from "../store/features/availableChatsSlice";
+import { toBase64 } from "../utils/api/toBase64";
 
 const MessageInput = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
@@ -28,12 +29,16 @@ const MessageInput = () => {
   //
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   //
 
-  const sendMessage = (event: FormEvent) => {
+  const sendMessage = async (event: FormEvent) => {
     event.preventDefault();
     const message = (event.target as any).message.value;
+    const image = (event.target as any).image.files[0] as File;
+    let base64: string | ArrayBuffer | null = null;
+    if (image) base64 = await toBase64(image);
 
     if (!message) return console.log("Message cannot be empty");
     if (!current_user) return console.log("Error getting current user");
@@ -43,6 +48,7 @@ const MessageInput = () => {
       message,
       user_id: current_user?.id,
       chat_id: selected_chat?.id,
+      image: base64,
     });
   };
 
@@ -107,6 +113,15 @@ const MessageInput = () => {
           name="message"
           ref={inputRef}
         ></input>
+        <input
+          type="file"
+          ref={fileRef}
+          style={{ display: "none" }}
+          name="image"
+        ></input>
+        <button type="button" onClick={() => fileRef.current?.click()}>
+          <i className="fa fa-image"></i>
+        </button>
         {/* EMOJI PICKER */}
         <button>send</button>
       </form>
