@@ -42,7 +42,11 @@ const CreateChat = () => {
       const users = selectedUsers.map((item) => item.id);
       users.push(current_user?.id);
 
-      setPayload({ name, users, base64 });
+      setPayload({
+        name,
+        users,
+        base64,
+      });
     },
     [selectedUsers]
   );

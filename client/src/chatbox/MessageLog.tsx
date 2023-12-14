@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../store/store";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
 import {
+  setLastSeenMessage,
   setMessages,
   setSelectedChat,
   toggleSettings,
@@ -46,6 +47,11 @@ const MessageLog = () => {
       dispatch(setSelectedChat(undefined));
   }, [available_chats, selected_chat]);
 
+  useEffect(() => {
+    if (messages && messages.length > 0)
+      dispatch(setLastSeenMessage(messages[messages.length - 1]?.id));
+  }, [messages]);
+
   return (
     <div style={{ background: "lightgrey", width: "200px", height: "300px" }}>
       <span style={{ display: "flex", justifyContent: "space-between" }}>
@@ -71,8 +77,12 @@ const MessageLog = () => {
             <div
               key={index}
               style={{
-                alignSelf:
-                  current_user?.id === item.user_id ? "flex-end" : "flex-start",
+                alignSelf: item.user_id
+                  ? current_user?.id === item.user_id
+                    ? "flex-end"
+                    : "flex-start"
+                  : "center",
+                fontSize: !item.user_id ? "10px" : "15px",
               }}
             >
               {item.content}

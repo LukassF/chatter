@@ -6,6 +6,7 @@ interface ChatMember {
   username: string | null;
   email: string | null;
   image: string | null;
+  has_seen: number | null;
 }
 export interface Chat {
   id: number | null;
@@ -17,6 +18,7 @@ export interface Chat {
   message: number;
   message_created_at: string;
   message_user_id: number;
+  last_message_id: number | null;
 }
 
 interface ChatState {
@@ -26,6 +28,7 @@ interface ChatState {
   settings_open: boolean;
   trigger_chat_reload: number;
   trigger_message_reload: number;
+  last_seen_message: number | null | undefined;
 }
 
 const initialState: ChatState = {
@@ -35,6 +38,7 @@ const initialState: ChatState = {
   settings_open: false,
   trigger_chat_reload: 0,
   trigger_message_reload: 0,
+  last_seen_message: null,
 };
 
 export const availableChatsSlice = createSlice({
@@ -127,8 +131,38 @@ export const availableChatsSlice = createSlice({
       ];
     },
 
+    setLastSeenMessage: (
+      state,
+      action: PayloadAction<number | undefined | null>
+    ) => {
+      state.last_seen_message = action.payload;
+    },
+
     toggleSettings: (state, action: PayloadAction<boolean>) => {
       state.settings_open = action.payload;
+    },
+
+    setUserHasSeen: (state, action: PayloadAction<any>) => {
+      const { user_id, chat_id, last_msg_id } = action.payload;
+      if (!chat_id || !user_id) return;
+
+      console.log(user_id, chat_id, last_msg_id);
+
+      const chat_idx = state.chats.findIndex((chat) => chat.id == chat_id);
+
+      let chat = state.chats[chat_idx];
+
+      if (!chat.users) return;
+
+      let user_idx = chat.users?.findIndex((user) => user.id == user_id);
+
+      let user = chat.users[user_idx];
+      if (!user) return;
+
+      user.has_seen = last_msg_id;
+
+      chat.users[user_idx] = user;
+      state.chats[chat_idx] = chat;
     },
   },
 });
@@ -147,4 +181,6 @@ export const {
   triggerChatReload,
   triggerMessageReload,
   setLastMessage,
+  setLastSeenMessage,
+  setUserHasSeen,
 } = availableChatsSlice.actions;

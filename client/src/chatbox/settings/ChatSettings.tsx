@@ -65,13 +65,41 @@ const ChatSettings = () => {
     return true;
   }, [initSelectedUsers, selectedUsers]);
 
+  const removed_users = useMemo(() => {
+    const removed = initSelectedUsers?.filter(
+      (user) => !selectedUsers?.find((val) => val.id == user.id)
+    );
+
+    return removed?.map((item) => ({
+      content: `User ${item.username} has been removed by ${current_user?.username}`,
+      chat_id: selected_chat?.id,
+    }));
+  }, [initSelectedUsers, selectedUsers]);
+
+  const added_users = useMemo(() => {
+    const added = selectedUsers?.filter(
+      (user) => !initSelectedUsers?.find((val) => val.id == user.id)
+    );
+    return added?.map((item) => ({
+      content: `User ${item.username} has been added by ${current_user?.username}`,
+      chat_id: selected_chat?.id,
+    }));
+  }, [initSelectedUsers, selectedUsers]);
+
   const changeData = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
       const name = (e.target as any).name.value;
       const image = (e.target as any).image.files[0] as File;
+      let message;
 
-      if (!name && !image && users_changed) return;
+      if (!name && !image && !users_changed) return;
+
+      if (image || name)
+        message = {
+          content: "Chat has been modified by " + current_user?.username,
+          chat_id: selected_chat?.id,
+        };
 
       let base64;
       if (image) {
@@ -88,9 +116,12 @@ const ChatSettings = () => {
 
       setPayload({
         chat_id: selected_chat?.id,
+        message,
         base64,
         name,
         users,
+        added_users,
+        removed_users,
       });
     },
     [selected_chat, selectedUsers]
@@ -112,7 +143,18 @@ const ChatSettings = () => {
       .map((user) => user.id?.toString());
 
     if (users && users.length > 1)
-      setPayload({ id: selected_chat?.id, base64: "", name: "", users });
+      setPayload({
+        chat_id: selected_chat?.id,
+        message: {
+          content: "User " + current_user?.username + " has left the chat",
+          chat_id: selected_chat?.id,
+        },
+        base64: "",
+        name: "",
+        users,
+        added_users: [],
+        removed_users: [],
+      });
     else setPerformDelete(true);
   }, [selected_chat, current_user]);
 
@@ -151,25 +193,49 @@ const ChatSettings = () => {
   useEffect(() => {
     const ws = new WebSocket(WEBSOCKET_URL);
 
-    ws.onmessage = (msg) => {
-      const data = typeof msg.data == "string" && JSON.parse(msg.data);
+    // ws.onmessage = (msg) => {
+    //   const data = typeof msg.data == "string" && JSON.parse(msg.data);
 
-      if (
-        data.type === "chat" &&
-        data.users.find((val: User) => val.id === current_user?.id)
-      )
-        dispatch(triggerChatReload());
-    };
+    //   if (
+    //     data.type === "chat" &&
+    //     data.users.find((val: User) => val.id === current_user?.id)
+    //   )
+    //     dispatch(triggerChatReload());
+    // };
     if (success) {
       ws.onopen = () => {
+        let messages = [
+          payload?.message,
+          ...payload?.added_users!,
+          ...payload?.removed_users!,
+        ];
+        messages = messages.filter((val) => val);
+        messages = messages.map((val) => val.content);
+        console.log(messages);
+
         ws.send(
           JSON.stringify({
             users: initSelectedUsers,
             type: "chat",
           })
         );
+
+        messages.forEach((message) => {
+          ws.send(
+            JSON.stringify({
+              id: Math.random(),
+              content: message,
+              chat_id: selected_chat?.id,
+              image: null,
+              created_at: new Date(),
+              type: "message",
+            })
+          );
+        });
       };
+      setInitSelectedUsers(selectedUsers);
     }
+
     return () => ws.close();
   }, [success]);
 

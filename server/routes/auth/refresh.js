@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
 
   const found_token = await getTokenFromDb(refresh_token);
 
-  if (found_token.data.length === 0 || found_token.error)
+  if (!found_token.data || found_token.data.length === 0 || found_token.error)
     return res.status(403).json({ error: "Invalid token" });
 
   jwt.verify(refresh_token, process.env.REFRESH_SECRET, (err, data) => {

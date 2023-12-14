@@ -1,6 +1,6 @@
 import Login from "./login/Login";
 import Signup from "./signup/Signup";
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./store/store";
 import { fetchImage, setCurrentUser } from "./store/features/currentUserSlice";
 import { decodeToken } from "./utils/decodeToken";
@@ -10,6 +10,8 @@ import Chats from "./chats/Chats";
 import CreateChat from "./chats/CreateChat";
 import ModifyProfile from "./profile/ModifyProfile";
 import ChatSettings from "./chatbox/settings/ChatSettings";
+import { fetchApi } from "./utils/api/fetchApi";
+import { BACKEND_URL, WEBSOCKET_URL } from "./utils/api/constants";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -21,11 +23,57 @@ function App() {
   const settings_open = useAppSelector(
     (state) => state.available_chats.settings_open
   );
+  const messages = useAppSelector((state) => state.available_chats.messages);
+
+  const [success, setSuccess] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   useLayoutEffect(() => {
     const user = decodeToken(access_token);
     if (user) dispatch(fetchImage(user));
   }, []);
+
+  useEffect(() => {
+    if (
+      access_token &&
+      current_user &&
+      current_user.id &&
+      selected_chat &&
+      selected_chat.id &&
+      messages &&
+      messages.length > 0
+    )
+      fetchData({
+        url: BACKEND_URL + "api/chats/toggleseen/" + current_user.id,
+        method: "PATCH",
+        data: { chat_id: selected_chat.id },
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      });
+  }, [selected_chat, access_token, current_user, messages]);
+
+  useEffect(() => {
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    if (success) {
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            users: selected_chat?.users,
+            user_id: current_user?.id,
+            chat_id: selected_chat?.id,
+            last_msg_id: messages ? messages[messages?.length - 1].id : null,
+            type: "hasseen",
+          })
+        );
+      };
+    }
+
+    return () => ws.close();
+  }, [success]);
 
   return (
     <>

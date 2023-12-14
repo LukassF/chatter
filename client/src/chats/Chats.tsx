@@ -8,6 +8,7 @@ import {
   addMessages,
   setChats,
   setSelectedChat,
+  setUserHasSeen,
   triggerChatReload,
 } from "../store/features/availableChatsSlice";
 import { User } from "../store/features/currentUserSlice";
@@ -54,7 +55,7 @@ const Chats = () => {
     const ws = new WebSocket(WEBSOCKET_URL);
     ws.onmessage = (msg) => {
       const data = typeof msg.data == "string" && JSON.parse(msg.data);
-      console.log(data, selected_chat);
+
       if (
         data.type === "chat" &&
         data.users.find((val: User) => val.id === current_user?.id)
@@ -62,17 +63,26 @@ const Chats = () => {
         dispatch(triggerChatReload());
       else if (data.type == "message") {
         dispatch(addMessages(data));
+        //TO IMPLEMENT no chat reload but push to top and so on last message bla bla
         dispatch(triggerChatReload());
+      } else if (data.type == "hasseen") {
+        dispatch(
+          setUserHasSeen({
+            user_id: data.user_id,
+            chat_id: data.chat_id,
+            last_msg_id: data.last_msg_id,
+          })
+        );
       }
     };
 
     return () => ws.close();
-  }, [selected_chat]);
+  }, [selected_chat, current_user]);
 
   const determineUser = (user_id: number, users: any[] | undefined) => {
     if (!users || !user_id) return;
     const index = users.findIndex((item) => item.id == user_id);
-    return users[index].username;
+    return users[index];
   };
 
   return (
@@ -83,7 +93,14 @@ const Chats = () => {
           <div
             key={index}
             onClick={() => dispatch(setSelectedChat(item))}
-            style={{ display: "flex" }}
+            style={{
+              display: "flex",
+              background:
+                determineUser(current_user?.id!, item.users)?.has_seen !==
+                item.last_message_id
+                  ? "grey"
+                  : "transparent",
+            }}
           >
             <div
               style={{
@@ -112,7 +129,7 @@ const Chats = () => {
               <h4 style={{ margin: 0 }}>{item.name}</h4>
               {item.message && (
                 <div>
-                  {determineUser(item.message_user_id, item.users)}:
+                  {determineUser(item.message_user_id, item.users)?.username}:
                   {item.message}
                 </div>
               )}
