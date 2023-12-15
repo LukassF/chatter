@@ -1,7 +1,7 @@
 import { FC, FormEvent, useCallback, useEffect, useState } from "react";
-import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL } from "../utils/api/constants";
-import { SignupData } from "../utils/types";
+import { fetchApi } from "../../../utils/api/fetchApi";
+import { BACKEND_URL } from "../../../utils/api/constants";
+import { SignupData } from "../../../utils/types";
 
 const Signup: FC = () => {
   const [form, setForm] = useState<SignupData>();

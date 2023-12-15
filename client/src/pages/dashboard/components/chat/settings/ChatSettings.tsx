@@ -1,4 +1,4 @@
-import React, {
+import {
   FormEvent,
   useCallback,
   useEffect,
@@ -6,22 +6,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/store";
-import {
-  deleteFromChats,
-  modifyChat,
-  toggleSettings,
-  triggerChatReload,
-} from "../../store/features/availableChatsSlice";
+import { useAppDispatch, useAppSelector } from "../../../../../store/store";
+import { toggleSettings } from "../../../../../store/features/availableChatsSlice";
 import {
   ALLOWED_TYPES,
   BACKEND_URL,
   WEBSOCKET_URL,
-} from "../../utils/api/constants";
-import { fetchApi } from "../../utils/api/fetchApi";
-import FoundUsersList from "../../chats/FoundUsersList";
-import { User } from "../../store/features/currentUserSlice";
-import { toBase64 } from "../../utils/api/toBase64";
+} from "../../../../../utils/api/constants";
+import { fetchApi } from "../../../../../utils/api/fetchApi";
+import FoundUsersList from "../../../../../components/FoundUsersList";
+import { User } from "../../../../../store/features/currentUserSlice";
+import { toBase64 } from "../../../../../utils/api/toBase64";
 
 const ChatSettings = () => {
   const dispatch = useAppDispatch();

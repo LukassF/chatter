@@ -1,14 +1,14 @@
 import { useCallback, FormEvent, useState, useEffect, useRef } from "react";
-import { fetchApi } from "../utils/api/fetchApi";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
+import { fetchApi } from "../../../../utils/api/fetchApi";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import {
   addMessages,
   pushToTop,
   setLastMessage,
   triggerChatReload,
-} from "../store/features/availableChatsSlice";
-import { toBase64 } from "../utils/api/toBase64";
+} from "../../../../store/features/availableChatsSlice";
+import { toBase64 } from "../../../../utils/api/toBase64";
 
 const MessageInput = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
@@ -40,7 +40,7 @@ const MessageInput = () => {
     let base64: string | ArrayBuffer | null = null;
     if (image) base64 = await toBase64(image);
 
-    if (!message) return console.log("Message cannot be empty");
+    if (!message && !image) return console.log("Message cannot be empty");
     if (!current_user) return console.log("Error getting current user");
     if (!selected_chat) return console.log("Error getting current chat");
 
@@ -84,8 +84,10 @@ const MessageInput = () => {
     //     // dispatch(pushToTop(data.chat_id));
     //   }
     // };
-    if (success && inputRef.current) {
-      inputRef.current!.value = "";
+    if (success) {
+      if (inputRef.current) inputRef.current.value = "";
+      if (fileRef.current) fileRef.current.value = "";
+
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
@@ -93,7 +95,7 @@ const MessageInput = () => {
             content: payload?.message,
             user_id: payload?.user_id,
             chat_id: payload?.chat_id,
-            image: null,
+            image: payload?.image,
             created_at: new Date(),
             type: "message",
           })

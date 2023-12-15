@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL } from "../utils/api/constants";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { fetchApi } from "../../../../utils/api/fetchApi";
+import { BACKEND_URL } from "../../../../utils/api/constants";
 import {
   setLastSeenMessage,
   setMessages,
   setSelectedChat,
   toggleSettings,
-} from "../store/features/availableChatsSlice";
+} from "../../../../store/features/availableChatsSlice";
 
 const MessageLog = () => {
   const dispatch = useAppDispatch();

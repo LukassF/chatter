@@ -1,14 +1,14 @@
 import { useState, useCallback, useEffect, useRef, FormEvent } from "react";
-import FoundUsersList from "./FoundUsersList";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
+import FoundUsersList from "../../../../../components/FoundUsersList";
+import { useAppDispatch, useAppSelector } from "../../../../../store/store";
+import { fetchApi } from "../../../../../utils/api/fetchApi";
+import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
 import {
   addChats,
   triggerChatReload,
-} from "../store/features/availableChatsSlice";
-import { User } from "../store/features/currentUserSlice";
-import { toBase64 } from "../utils/api/toBase64";
+} from "../../../../../store/features/availableChatsSlice";
+import { User } from "../../../../../store/features/currentUserSlice";
+import { toBase64 } from "../../../../../utils/api/toBase64";
 
 const CreateChat = () => {
   const dispatch = useAppDispatch();

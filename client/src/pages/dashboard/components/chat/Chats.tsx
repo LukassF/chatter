@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
-import { useAppDispatch, useAppSelector } from "../store/store";
+import { fetchApi } from "../../../../utils/api/fetchApi";
+import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
   Chat,
   addChats,
@@ -12,8 +12,8 @@ import {
   setSelectedChat,
   setUserHasSeen,
   triggerChatReload,
-} from "../store/features/availableChatsSlice";
-import { User } from "../store/features/currentUserSlice";
+} from "../../../../store/features/availableChatsSlice";
+import { User } from "../../../../store/features/currentUserSlice";
 
 const Chats = () => {
   const dispatch = useAppDispatch();
@@ -57,7 +57,7 @@ const Chats = () => {
     const ws = new WebSocket(WEBSOCKET_URL);
     ws.onmessage = (msg) => {
       const data = typeof msg.data == "string" && JSON.parse(msg.data);
-
+      console.log(data);
       if (
         data.type === "chat" &&
         data.users.find((val: User) => val.id === current_user?.id)

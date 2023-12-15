@@ -29,7 +29,7 @@ router.post("/send", async (req, res) => {
     const message_id = data[0].id;
     let chat_update = await supabase
       .from("chats")
-      .update({ last_message: message_id })
+      .update({ last_message: message_id, updated_at: new Date() })
       .eq("id", chat_id);
 
     if (chat_update.error) throw new Error("Could not update chats");

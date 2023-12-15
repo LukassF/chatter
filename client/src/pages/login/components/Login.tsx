@@ -1,17 +1,22 @@
 import { FC, useCallback, FormEvent, useState, useEffect } from "react";
-import { fetchApi } from "../utils/api/fetchApi";
-import { BACKEND_URL } from "../utils/api/constants";
-import { LoginData } from "../utils/types";
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { fetchImage, setCurrentUser } from "../store/features/currentUserSlice";
-import { decodeToken } from "../utils/decodeToken";
+import { fetchApi } from "../../../utils/api/fetchApi";
+import { BACKEND_URL } from "../../../utils/api/constants";
+import { LoginData } from "../../../utils/types";
+import { useAppDispatch, useAppSelector } from "../../../store/store";
+import {
+  fetchImage,
+  setCurrentUser,
+} from "../../../store/features/currentUserSlice";
+import { decodeToken } from "../../../utils/decodeToken";
 import {
   deleteTokens,
   setAccessToken,
   setRefreshToken,
-} from "../store/features/tokensSlice";
+} from "../../../store/features/tokensSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login: FC = () => {
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const access_token = useAppSelector((state) => state.tokens.access_token);
 
@@ -34,24 +39,6 @@ const Login: FC = () => {
     setForm({ username, password });
   }, []);
 
-  const logout = useCallback(() => {
-    fetchData({
-      url: BACKEND_URL + "auth/logout",
-      method: "POST",
-      data: {
-        refresh_token: JSON.parse(
-          window.localStorage.getItem("refresh_token")!
-        ),
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    dispatch(deleteTokens());
-    window.location.reload();
-  }, []);
-
   useEffect(() => {
     if (form)
       fetchData({
@@ -71,6 +58,8 @@ const Login: FC = () => {
 
       const user = decodeToken(data.data.access_token);
       if (user) dispatch(fetchImage(user));
+
+      navigate("/");
     }
   }, [data]);
 
@@ -82,8 +71,6 @@ const Login: FC = () => {
         <input type="password" placeholder="Password" name="password" />
         <button>Login</button>
       </form>
-
-      <button onClick={logout}>Logout</button>
     </>
   );
 };

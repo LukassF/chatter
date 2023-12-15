@@ -1,8 +1,8 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../store/store";
-import { fetchApi } from "../utils/api/fetchApi";
-import { ALLOWED_TYPES, BACKEND_URL } from "../utils/api/constants";
-import { toBase64 } from "../utils/api/toBase64";
+import { useAppSelector } from "../../../../store/store";
+import { fetchApi } from "../../../../utils/api/fetchApi";
+import { ALLOWED_TYPES, BACKEND_URL } from "../../../../utils/api/constants";
+import { toBase64 } from "../../../../utils/api/toBase64";
 
 const ModifyProfile = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);

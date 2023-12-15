@@ -22,16 +22,22 @@ export const fetchApi = (
         const token_from_ls = window.localStorage.getItem("refresh_token");
         const refresh_token = token_from_ls && JSON.parse(token_from_ls);
 
-        const { data } = await axios.post(BACKEND_URL + "auth/refresh", {
-          refresh_token,
-        });
+        try {
+          const { data } = await axios.post(BACKEND_URL + "auth/refresh", {
+            refresh_token,
+          });
 
-        params.headers!["Authorization"] = "Bearer " + data.access_token;
+          params.headers!["Authorization"] = "Bearer " + data.access_token;
 
-        window.localStorage.setItem(
-          "access_token",
-          JSON.stringify(data.access_token)
-        );
+          window.localStorage.setItem(
+            "access_token",
+            JSON.stringify(data.access_token)
+          );
+        } catch (err) {
+          // console.log(err);
+          window.localStorage.removeItem("access_token");
+          window.localStorage.removeItem("refresh_token");
+        }
       }
     }
 
