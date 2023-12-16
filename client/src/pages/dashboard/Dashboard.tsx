@@ -11,6 +11,7 @@ import { fetchUser } from "../../store/features/currentUserSlice";
 import { decodeToken } from "../../utils/decodeToken";
 import { fetchApi } from "../../utils/api/fetchApi";
 import { deleteTokens } from "../../store/features/tokensSlice";
+import Aside from "./components/other/Aside";
 
 const Dashboard: FC = () => {
   const dispatch = useAppDispatch();
@@ -75,86 +76,75 @@ const Dashboard: FC = () => {
     return () => ws.close();
   }, [success]);
 
-  const logout = useCallback(() => {
-    fetchData({
-      url: BACKEND_URL + "auth/logout",
-      method: "POST",
-      data: {
-        refresh_token,
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    dispatch(deleteTokens());
-    window.location.reload();
-  }, []);
-
   return (
-    <main className="grid grid-cols-[1fr_14fr] divide-x-2 overflow-hidden max-h-screen">
-      <aside className="py-3 px-2">
-        <ul className="list-style-none flex flex-col items-stretch justify-stretch gap-1  [&>*]:flex [&>*]:justify-center [&>*]:items-center [&>*]:p-3 [&>*]:text-xl [&>*]:cursor-pointer [&>*]:rounded-md">
-          <li className="hover:bg-gray-100">
-            <i className="far fa-message"></i>
-          </li>
-          <li className="hover:bg-gray-100">
-            <i className="fa fa-people-group"></i>
-          </li>
-          <li className="hover:bg-gray-100">
-            <i className="fas fa-tasks"></i>
-          </li>
-          <li className="hover:bg-gray-100">
-            <i className="fa fa-trash"></i>
-          </li>
-        </ul>
+    <main className="grid grid-cols-[1fr_14fr] divide-x-2 overflow-hidden h-screen">
+      <Aside />
+      <section className="grid grid-cols-[1fr_1.8fr] lg:grid-cols-[1.2fr_2fr_0.9fr] divide-x-2">
+        <article className=" py-3 flex flex-col items-stretch gap-3">
+          <div className="flex justify-between items-center px-3">
+            <h1 className="text-2xl font-bold">Chats</h1>
+            <button className=" p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-sm flex justify-center items-center opacity-70">
+              <i className="fa fa-add"></i>
+            </button>
+          </div>
 
-        <button></button>
-        <button>
-          <i className="fa fa-sign-out"></i>
-        </button>
-      </aside>
-      <section className="overflow-auto max-h-screen">
-        <button onClick={logout}>Logout</button>
-        <hr></hr>
-        <ModifyProfile />
-        <hr></hr>
-        {current_user?.id && (
-          <div>
-            {current_user?.username}
-            <div
+          <div className="px-3">
+            <input
+              type="text"
+              placeholder="&#xf002; Search"
+              className="form-control py-2 rounded-full text-sm"
               style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                position: "relative",
+                fontFamily: "'Helvetica', FontAwesome, sans-serif",
+                fontStyle: "normal",
               }}
-            >
-              <img
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                src={
-                  current_user.image
-                    ? current_user.image
-                    : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-                }
-                alt=""
-              />
-            </div>
+            />
           </div>
-        )}
-        <hr></hr>
-        {current_user && <CreateChat />}
-        {selected_chat && (
-          <div style={{ display: "flex" }}>
+
+          <hr className="mx-3"></hr>
+
+          {current_user && <Chats />}
+        </article>
+        <article></article>
+        <article>
+          <ModifyProfile />
+          <hr></hr>
+          {/* {current_user?.id && (
             <div>
-              <MessageLog />
-              <MessageInput />
+              {current_user?.username}
+              <div
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  borderRadius: "50%",
+                  overflow: "hidden",
+                  position: "relative",
+                }}
+              >
+                <img
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  src={
+                    current_user.image
+                      ? current_user.image
+                      : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                  }
+                  alt=""
+                />
+              </div>
             </div>
-            {settings_open && <ChatSettings />}
-          </div>
-        )}
-        {current_user && <Chats />}
+          )}
+          <hr></hr>
+          {current_user && <CreateChat />}
+          {selected_chat && (
+            <div style={{ display: "flex" }}>
+              <div>
+                <MessageLog />
+                <MessageInput />
+              </div>
+              {settings_open && <ChatSettings />}
+            </div>
+          )}
+          {current_user && <Chats />} */}
+        </article>
       </section>
     </main>
   );

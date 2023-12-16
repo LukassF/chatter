@@ -14,6 +14,7 @@ import {
   triggerChatReload,
 } from "../../../../store/features/availableChatsSlice";
 import { User } from "../../../../store/features/currentUserSlice";
+import ChatCard from "./individual/ChatCard";
 
 const Chats = () => {
   const dispatch = useAppDispatch();
@@ -92,77 +93,16 @@ const Chats = () => {
     return () => ws.close();
   }, [selected_chat, current_user]);
 
-  const determineUser = (user_id: number, users: any[] | undefined) => {
-    if (!users || !user_id) return;
-    const index = users.findIndex((item) => item.id == user_id);
-    return users[index];
-  };
-
   return (
     <>
-      <h2>Available chats</h2>
-      {available_chats ? (
-        available_chats.map((item: Chat, index: number) => (
-          <div
-            key={index}
-            onClick={() => dispatch(setSelectedChat(item))}
-            style={{
-              display: "flex",
-              background:
-                determineUser(current_user?.id!, item.users)?.has_seen !==
-                  item.last_message_id && selected_chat?.id != item.id
-                  ? "grey"
-                  : "transparent",
-            }}
-          >
-            <div
-              style={{
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                overflow: "hidden",
-                position: "relative",
-              }}
-            >
-              <img
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                src={
-                  item.image
-                    ? item.image
-                    : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-                }
-                alt=""
-              />
-            </div>
-            <div>
-              <h4 style={{ margin: 0 }}>{item.name}</h4>
-              {item.message && (
-                <div>
-                  {determineUser(item.message_user_id, item.users)?.id ===
-                  current_user?.id
-                    ? "You"
-                    : determineUser(item.message_user_id, item.users)?.username}
-                  :{item.message}
-                </div>
-              )}
-            </div>
-
-            {/* <ul style={{ listStyle: "none", padding: "0px" }}>
-              {item.users?.map((user, id: number) => (
-                <li
-                  style={{ fontSize: "15px", color: "grey" }}
-                  key={index + id}
-                >
-                  {user.username}
-                </li>
-              ))}
-            </ul> */}
-          </div>
-        ))
+      {loading ? (
+        <div>Loading...</div>
+      ) : available_chats ? (
+        <article className="flex flex-col justify-stretch">
+          {available_chats.map((item: Chat, index: number) => (
+            <ChatCard item={item} key={index} />
+          ))}
+        </article>
       ) : (
         <div>No chats yet</div>
       )}
