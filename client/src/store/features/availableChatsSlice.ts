@@ -34,7 +34,7 @@ interface ChatState {
 const initialState: ChatState = {
   chats: [],
   selected_chat: undefined,
-  messages: undefined,
+  messages: [],
   settings_open: false,
   trigger_chat_reload: 0,
   trigger_message_reload: 0,
@@ -106,7 +106,24 @@ export const availableChatsSlice = createSlice({
       );
     },
 
-    addMessages: (state, action: PayloadAction<Message>) => {
+    addManyMessages: (state, action: PayloadAction<Message[]>) => {
+      let messages;
+      if (state.selected_chat)
+        messages = action.payload
+          .sort(
+            (a, b) =>
+              Number(new Date(a.created_at)) - Number(new Date(b.created_at))
+          )
+          .filter(
+            (item) =>
+              item.chat_id === state.selected_chat?.id &&
+              !state.messages?.find((message) => message.id === item.id)
+          );
+
+      state.messages?.unshift(...messages!);
+    },
+
+    addMessage: (state, action: PayloadAction<Message>) => {
       if (
         !state.selected_chat ||
         action.payload.chat_id === state.selected_chat?.id
@@ -177,7 +194,8 @@ export const {
   deleteFromChats,
   setSelectedChat,
   setMessages,
-  addMessages,
+  addMessage,
+  addManyMessages,
   toggleSettings,
   triggerChatReload,
   triggerMessageReload,

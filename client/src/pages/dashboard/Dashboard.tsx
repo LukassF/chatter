@@ -7,7 +7,7 @@ import MessageLog from "./components/messaging/MessageLog";
 import ChatSettings from "./components/chat/settings/ChatSettings";
 import MessageInput from "./components/messaging/MessageInput";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../utils/api/constants";
-import { fetchImage } from "../../store/features/currentUserSlice";
+import { fetchUser } from "../../store/features/currentUserSlice";
 import { decodeToken } from "../../utils/decodeToken";
 import { fetchApi } from "../../utils/api/fetchApi";
 import { deleteTokens } from "../../store/features/tokensSlice";
@@ -32,7 +32,7 @@ const Dashboard: FC = () => {
 
   useLayoutEffect(() => {
     const user = decodeToken(access_token);
-    if (user) dispatch(fetchImage(user));
+    if (user) dispatch(fetchUser(user));
   }, []);
 
   useEffect(() => {
@@ -92,49 +92,71 @@ const Dashboard: FC = () => {
   }, []);
 
   return (
-    <>
-      <button onClick={logout}>Logout</button>
-      <hr></hr>
-      <ModifyProfile />
-      <hr></hr>
-      {current_user?.id && (
-        <div>
-          {current_user?.username}
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "50%",
-              overflow: "hidden",
-              position: "relative",
-            }}
-          >
-            <img
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              src={
-                current_user.image
-                  ? current_user.image
-                  : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-              }
-              alt=""
-            />
-          </div>
-        </div>
-      )}
-      <hr></hr>
-      {current_user && <CreateChat />}
-      {current_user && <Chats />}
+    <main className="grid grid-cols-[1fr_14fr] divide-x-2 overflow-hidden max-h-screen">
+      <aside className="py-3 px-2">
+        <ul className="list-style-none flex flex-col items-stretch justify-stretch gap-1  [&>*]:flex [&>*]:justify-center [&>*]:items-center [&>*]:p-3 [&>*]:text-xl [&>*]:cursor-pointer [&>*]:rounded-md">
+          <li className="hover:bg-gray-100">
+            <i className="far fa-message"></i>
+          </li>
+          <li className="hover:bg-gray-100">
+            <i className="fa fa-people-group"></i>
+          </li>
+          <li className="hover:bg-gray-100">
+            <i className="fas fa-tasks"></i>
+          </li>
+          <li className="hover:bg-gray-100">
+            <i className="fa fa-trash"></i>
+          </li>
+        </ul>
 
-      {selected_chat && (
-        <div style={{ display: "flex" }}>
+        <button></button>
+        <button>
+          <i className="fa fa-sign-out"></i>
+        </button>
+      </aside>
+      <section className="overflow-auto max-h-screen">
+        <button onClick={logout}>Logout</button>
+        <hr></hr>
+        <ModifyProfile />
+        <hr></hr>
+        {current_user?.id && (
           <div>
-            <MessageLog />
-            <MessageInput />
+            {current_user?.username}
+            <div
+              style={{
+                width: "50px",
+                height: "50px",
+                borderRadius: "50%",
+                overflow: "hidden",
+                position: "relative",
+              }}
+            >
+              <img
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                src={
+                  current_user.image
+                    ? current_user.image
+                    : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                }
+                alt=""
+              />
+            </div>
           </div>
-          {settings_open && <ChatSettings />}
-        </div>
-      )}
-    </>
+        )}
+        <hr></hr>
+        {current_user && <CreateChat />}
+        {selected_chat && (
+          <div style={{ display: "flex" }}>
+            <div>
+              <MessageLog />
+              <MessageInput />
+            </div>
+            {settings_open && <ChatSettings />}
+          </div>
+        )}
+        {current_user && <Chats />}
+      </section>
+    </main>
   );
 };
 

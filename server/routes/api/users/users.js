@@ -9,14 +9,17 @@ const PROFILE_IMAGES = __dirname + "\\profile_images";
 
 //----------------------------------------------------
 
-router.get("/getimage", async (req, res) => {
+router.get("/getuser", async (req, res) => {
   const { user } = req.user;
+  console.log(user);
 
   try {
     const { data, error } = await supabase
       .from("users")
       .select("id,username,email,image")
       .eq("id", user.id);
+
+    console.log(data);
 
     if (error) throw new Error("fetch failed");
 
@@ -25,7 +28,7 @@ router.get("/getimage", async (req, res) => {
       return res.json({ ...data[0], image: base64 });
     }
 
-    return res.json(null);
+    return res.json(data[0]);
   } catch (err) {
     return res
       .status(400)

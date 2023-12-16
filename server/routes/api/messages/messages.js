@@ -44,13 +44,17 @@ router.post("/send", async (req, res) => {
 
 router.get("/getall", async (req, res) => {
   const chat_id = req.query.chat_id;
+  const start = req.query.start;
+  const end = req.query.end;
 
   try {
     if (!chat_id) throw new Error("No chat id provided");
     const { data, error } = await supabase
       .from("messages")
       .select()
-      .eq("chat_id", chat_id);
+      .eq("chat_id", chat_id)
+      .order("id", { ascending: false })
+      .range(start, end);
 
     if (error) throw new Error(error);
 

@@ -19,45 +19,44 @@ const initialState: UserState = {
   user: { id: null, username: null, email: null, image: null },
 };
 
-export const fetchImage = createAsyncThunk(
-  "fetch_image",
-  async (user: User) => {
-    console.log(user);
+export const fetchUser = createAsyncThunk("fetch_user", async (user: User) => {
+  console.log(user);
 
-    if (!user.image) return;
-    const state = store.getState();
-    const access_token = state.tokens.access_token;
+  // if (!user.image) return;
 
-    try {
-      const data = await axios.get(
-        BACKEND_URL + "api/users/getimage",
+  const state = store.getState();
+  const access_token = state.tokens.access_token;
 
-        {
-          headers: { Authorization: "Bearer " + access_token },
-        }
-      );
+  try {
+    const data = await axios.get(
+      BACKEND_URL + "api/users/getuser",
 
-      return data.data;
-    } catch (err) {
-      return err;
-    }
+      {
+        headers: { Authorization: "Bearer " + access_token },
+      }
+    );
+
+    return data.data;
+  } catch (err) {
+    return err;
   }
-);
+});
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
+      console.log(action.payload);
       state.user = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(
-      fetchImage.fulfilled,
+      fetchUser.fulfilled,
       (state, action: PayloadAction<any>) => {
+        console.log(action.payload);
         state.user = action.payload;
-        console.log(state.user);
       }
     );
   },

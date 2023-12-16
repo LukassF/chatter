@@ -18,7 +18,9 @@ router.post("/", async (req, res) => {
 
   const found_user = await findUser(username, is_email);
   if (found_user.data.length === 0)
-    return res.status(400).json({ error: "User not found!" });
+    return res
+      .status(400)
+      .json({ error: "Username not found!", type: "username" });
 
   const valid_password = await bcrypt.compare(
     password,
@@ -26,7 +28,9 @@ router.post("/", async (req, res) => {
   );
 
   if (!valid_password)
-    return res.status(400).json({ error: "Invalid password!" });
+    return res
+      .status(400)
+      .json({ error: "Invalid password!", type: "password" });
 
   const access_token = generateAccessToken(found_user.data[0]);
   const refresh_token = generateRefreshToken(found_user.data[0]);
@@ -35,7 +39,7 @@ router.post("/", async (req, res) => {
   if (error)
     return res.status(500).json({ error: "Error updating a refresh token" });
 
-  res.json({ access_token, refresh_token });
+  res.json({ access_token, refresh_token, operation: "login" });
 });
 
 const findUser = async (username, is_email) => {

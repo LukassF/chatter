@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
   Chat,
   addChats,
-  addMessages,
+  addMessage,
   pushToTop,
   setChats,
   setLastMessage,
@@ -64,7 +64,7 @@ const Chats = () => {
       )
         dispatch(triggerChatReload());
       else if (data.type == "message") {
-        dispatch(addMessages(data));
+        dispatch(addMessage(data));
         //TO IMPLEMENT no chat reload but push to top and so on last message bla bla
         // dispatch(
         //   setLastMessage({

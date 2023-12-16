@@ -3,7 +3,7 @@ import { fetchApi } from "../../../../utils/api/fetchApi";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import {
-  addMessages,
+  addMessage,
   pushToTop,
   setLastMessage,
   triggerChatReload,

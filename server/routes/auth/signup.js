@@ -18,17 +18,19 @@ router.post("/", async (req, res) => {
 
   const takenEmail = await isEmailTaken(email);
   if (takenEmail.data.length > 0)
-    return res.status(400).json({ error: "Email is taken" });
+    return res.status(400).json({ error: "Email is taken", type: "email" });
 
   const takenUsername = await isUsernameTaken(username);
   if (takenUsername.data.length > 0)
-    return res.status(400).json({ error: "Username is taken" });
+    return res
+      .status(400)
+      .json({ error: "Username is taken", type: "username" });
 
   const salt = await bcrypt.genSalt(10);
   const hashed_password = await bcrypt.hash(password, salt);
 
   const insertion = await insertData(username, email, hashed_password);
-  res.json(insertion);
+  res.status(200).json({ insertion, operation: "signup" });
 });
 
 const isEmailTaken = async (email) => {
