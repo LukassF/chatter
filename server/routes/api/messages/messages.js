@@ -10,7 +10,8 @@ router.post("/send", async (req, res) => {
   const { message, user_id, chat_id, image } = req.body;
 
   try {
-    if (!message || !user_id || !chat_id) throw new Error("Fields are empty");
+    if ((!message && !image) || !user_id || !chat_id)
+      throw new Error("Fields are empty");
 
     let insert_object = { content: message, user_id, chat_id };
 

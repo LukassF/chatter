@@ -1,9 +1,11 @@
-import { FC, useCallback } from "react";
+import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import {
   Chat,
   setSelectedChat,
 } from "../../../../../store/features/availableChatsSlice";
+import { calculateTime } from "../../../../../utils/calculateTime";
+import ChatImage from "./ChatImage";
 
 const ChatCard = ({ item }: { item: Chat }) => {
   const dispatch = useAppDispatch();
@@ -21,41 +23,50 @@ const ChatCard = ({ item }: { item: Chat }) => {
     []
   );
 
+  const hasNotSeen = useCallback(() => {
+    return (
+      determineUser(current_user?.id!, item.users)?.has_seen !==
+        item.last_message_id && selected_chat?.id != item.id
+    );
+  }, [item]);
+
   return (
     <div
       onClick={() => dispatch(setSelectedChat(item))}
-      // style={{
-      //   display: "flex",
-      //   background:
-      //     determineUser(current_user?.id!, item.users)?.has_seen !==
-      //       item.last_message_id && selected_chat?.id != item.id
-      //       ? "grey"
-      //       : "transparent",
-      // }}
-      className="grid grid-cols-[1fr_7fr] min-h-[30px] justify-center items-center hover:bg-stone-100 cursor-pointer bg-opacity-70 px-2 transition-all"
+      className="grid grid-cols-[1fr_7fr] min-h-[30px] justify-center items-center hover:bg-stone-100 cursor-pointer bg-opacity-70 px-2 transition-all py-1"
     >
-      <div className="overflow-hidden bg-gray-200 relative rounded-full m-1 w-[50px] aspect-square">
-        <img
-          className="w-full h-full object-cover"
-          src={
-            item.image
-              ? item.image
-              : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-          }
-          alt=""
-        />
-      </div>
+      <ChatImage item={item} />
       <div className=" p-[7px] grid grid-rows-[1fr_1.1fr]">
-        <h4 className="m-0 p-0 text-lg">{item.name}</h4>
-        {item.message && (
-          <div className="text-sm text-stone-500">
-            {determineUser(item.message_user_id, item.users)?.id ===
-            current_user?.id
-              ? "You"
-              : determineUser(item.message_user_id, item.users)?.username}
-            :{item.message}
-          </div>
-        )}
+        <h4
+          className="m-0 p-0 text-[17px]"
+          style={{ fontWeight: hasNotSeen() ? 600 : 400 }}
+        >
+          {item.name}
+        </h4>
+
+        <div className="flex items-center truncate max-w-[100%] overflow-hidden">
+          <span
+            className="text-sm text-stone-500 overflow-hidden truncate  max-w-[60%]"
+            style={{
+              fontWeight: hasNotSeen() ? 700 : 300,
+              color: hasNotSeen() ? "black" : "rgb(120 ,113 ,108)",
+            }}
+          >
+            <span>
+              {determineUser(item.message_user_id, item.users)?.id ===
+              current_user?.id
+                ? "You: "
+                : `${
+                    determineUser(item.message_user_id, item.users)?.username
+                  }: `}
+            </span>
+            <span>{item.message ? item.message : "Image sent"} </span>
+          </span>
+          <span className="text-sm text-stone-500 font-light flex items-center">
+            <div className="w-[2.5px] aspect-square rounded-full bg-stone-400 mx-1"></div>
+            {calculateTime(item.message_created_at)}
+          </span>
+        </div>
       </div>
 
       {/* <ul style={{ listStyle: "none", padding: "0px" }}>

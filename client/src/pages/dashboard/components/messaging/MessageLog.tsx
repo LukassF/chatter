@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { fetchApi } from "../../../../utils/api/fetchApi";
-import { BACKEND_URL } from "../../../../utils/api/constants";
+import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import {
   addManyMessages,
   setLastSeenMessage,
@@ -9,6 +9,9 @@ import {
   setSelectedChat,
   toggleSettings,
 } from "../../../../store/features/availableChatsSlice";
+import IndividualMessage from "./Message";
+import MessagesSkeleton from "../chat/loaders/MessagesSkeleton";
+import { RotatingLines } from "react-loader-spinner";
 
 const MessageLog = () => {
   const dispatch = useAppDispatch();
@@ -24,13 +27,14 @@ const MessageLog = () => {
 
   const [msg_res, setMsgRes] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setMsgRes, setError, setLoading);
   const [range, setRange] = useState<number[]>([0, 19]);
   const [scrollPos, setScrollPos] = useState<number>(0);
 
   const sentinel = useRef<HTMLDivElement>(null);
   const scrollCont = useRef<HTMLDivElement>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   let options = {
     root: scrollCont.current,
@@ -69,11 +73,11 @@ const MessageLog = () => {
   //fetching data on payload change
   useEffect(() => {
     recordScrollPos();
-    if (access_token)
+    if (access_token && !loading && range && selected_chat)
       fetchData({
         url:
           BACKEND_URL +
-          `api/messages/getall?chat_id=${selected_chat?.id}&start=${range[0]}&end=${range[1]}`,
+          `api/messages/getall?chat_id=${selected_chat.id}&start=${range[0]}&end=${range[1]}`,
         method: "GET",
         headers: {
           Authorization: "Bearer " + access_token,
@@ -91,7 +95,7 @@ const MessageLog = () => {
 
   //closing a chat if it is no longer available
   useEffect(() => {
-    if (!available_chats.find((item) => item.id == selected_chat?.id))
+    if (!selected_chat?.users?.find((item) => item.id == current_user?.id))
       dispatch(setSelectedChat(undefined));
   }, [available_chats, selected_chat]);
 
@@ -109,85 +113,54 @@ const MessageLog = () => {
     restoreScrollPos();
   }, [messages]);
 
+  //scrolling to the end of the messages when new message is received
+  useEffect(() => {
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    ws.onmessage = (msg) => {
+      const data = typeof msg.data == "string" && JSON.parse(msg.data);
+
+      if (data && data.type == "message" && data.user_id === current_user?.id)
+        messageEndRef.current?.scrollIntoView();
+    };
+
+    return () => ws.close();
+  }, []);
+
   return (
-    <>
-      <span style={{ display: "flex", justifyContent: "space-between" }}>
-        <h4 style={{ margin: 0 }}>{selected_chat?.name}</h4>
-        <span
-          style={{ cursor: "pointer" }}
-          onClick={() => dispatch(toggleSettings(true))}
-        >
-          settings
-        </span>
-        <button
-          onClick={() => setRange((prev) => [prev[0] + 20, prev[1] + 20])}
-        >
-          more
-        </button>
-      </span>
-      <div
-        ref={scrollCont}
-        // -----------
-        style={{
-          background: "lightgrey",
-          width: "270px",
-          height: "320px",
-          overflow: "auto",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            overflow: "hidden",
-          }}
-        >
-          <div ref={sentinel}></div>
-          {loading && <div>Loading...</div>}
-          {messages && messages.length > 0 ? (
-            messages.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  alignSelf: item.user_id
-                    ? current_user?.id === item.user_id
-                      ? "flex-end"
-                      : "flex-start"
-                    : "center",
-                  fontSize: !item.user_id ? "10px" : "15px",
-                }}
-              >
-                {item.image && (
-                  <div
-                    style={{
-                      height: "70px",
-                      width: "90px",
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      src={item.image}
-                      alt="message_image"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  </div>
-                )}
-                {item.content}
-              </div>
-            ))
-          ) : error ? (
-            <div>Timeout error occured, please try again</div>
-          ) : (
-            !loading && <p>No messages yet</p>
-          )}
-        </div>
+    <div
+      ref={scrollCont}
+      // -----------
+      className="h-full w-full overflow-auto"
+    >
+      <div className="flex flex-col gap-1">
+        <div ref={sentinel}></div>
+        {loading && (!messages || messages?.length === 0) && (
+          <MessagesSkeleton />
+        )}
+        {loading && messages?.length! > 0 && (
+          <div className="w-full flex justify-center mt-3">
+            <RotatingLines
+              strokeColor="grey"
+              strokeWidth="5"
+              animationDuration="0.75"
+              width="26"
+              visible={true}
+            />
+          </div>
+        )}
+        {messages && messages.length > 0 ? (
+          messages.map((item, index) => (
+            <IndividualMessage item={item} key={index} />
+          ))
+        ) : error ? (
+          <div>Timeout error occured, please try again</div>
+        ) : (
+          !loading && <p>No messages yet</p>
+        )}
       </div>
-    </>
+      <div ref={messageEndRef}></div>
+    </div>
   );
 };
 

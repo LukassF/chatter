@@ -1,13 +1,8 @@
-import { useCallback, FormEvent, useState, useEffect, useRef } from "react";
+import { FormEvent, useState, useEffect, useRef } from "react";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
-import {
-  addMessage,
-  pushToTop,
-  setLastMessage,
-  triggerChatReload,
-} from "../../../../store/features/availableChatsSlice";
+
 import { toBase64 } from "../../../../utils/api/toBase64";
 
 const MessageInput = () => {
@@ -108,24 +103,36 @@ const MessageInput = () => {
 
   return (
     <>
-      <form onSubmit={sendMessage} autoComplete="off">
+      <form
+        onSubmit={sendMessage}
+        autoComplete="off"
+        className="h-full grid grid-cols-[12fr_1fr_1fr] gap-2 px-2 py-1 justify-center items-center"
+      >
         <input
+          className="rounded-full h-3/4 px-3 border-2 border-stone-200 bg-stone-100 outline-none"
           type="text"
-          placeholder="your message"
+          placeholder="Your message"
           name="message"
           ref={inputRef}
         ></input>
+
         <input
           type="file"
           ref={fileRef}
           style={{ display: "none" }}
           name="image"
         ></input>
-        <button type="button" onClick={() => fileRef.current?.click()}>
+        <button
+          type="button"
+          className="hover:bg-gray-100 h-3/4 text-blue-600 max-h-[45px] rounded-full aspect-square"
+          onClick={() => fileRef.current?.click()}
+        >
           <i className="fa fa-image"></i>
         </button>
         {/* EMOJI PICKER */}
-        <button>send</button>
+        <button className="hover:bg-gray-100 text-blue-600 h-3/4 max-h-[45px] rounded-full aspect-square">
+          <i className="fa fa-paper-plane"></i>
+        </button>
       </form>
     </>
   );

@@ -12,6 +12,8 @@ import { decodeToken } from "../../utils/decodeToken";
 import { fetchApi } from "../../utils/api/fetchApi";
 import { deleteTokens } from "../../store/features/tokensSlice";
 import Aside from "./components/other/Aside";
+import AvailableChatsSkeleton from "./components/chat/loaders/AvailableChatsSkeleton";
+import ChatBox from "./components/chat/ChatBox";
 
 const Dashboard: FC = () => {
   const dispatch = useAppDispatch();
@@ -30,6 +32,8 @@ const Dashboard: FC = () => {
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
+
+  const [chatsearch, setChatSearch] = useState<string | null>("");
 
   useLayoutEffect(() => {
     const user = decodeToken(access_token);
@@ -90,6 +94,7 @@ const Dashboard: FC = () => {
 
           <div className="px-3">
             <input
+              onChange={(e) => setChatSearch(e.target.value)}
               type="text"
               placeholder="&#xf002; Search"
               className="form-control py-2 rounded-full text-sm"
@@ -102,9 +107,11 @@ const Dashboard: FC = () => {
 
           <hr className="mx-3"></hr>
 
-          {current_user && <Chats />}
+          {current_user && <Chats search={chatsearch} />}
         </article>
-        <article></article>
+        <article>
+          {selected_chat ? <ChatBox /> : <div>No chat selected</div>}
+        </article>
         <article>
           <ModifyProfile />
           <hr></hr>

@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 require("dotenv/config");
+const path = require("path");
 const supabase = require("../../../utils/supabase");
 const fileSaving = require("../../../utils/fileSaving");
 
 const COVER_IMAGES = __dirname + "\\cover_images";
+const PROFILE_IMAGES = path.resolve("routes/api/users", "profile_images");
 
 router.put("/modify", async (req, res) => {
   const {
@@ -82,9 +84,13 @@ router.put("/modify", async (req, res) => {
 });
 
 router.get("/getchats", async (req, res) => {
+  const search = req.query.search;
+  console.log(PROFILE_IMAGES);
+
   try {
     const { data, error } = await supabase.rpc("get_chats_with_users", {
       user_id: req.user.user.id,
+      search: search ? `%${search}%` : "%",
     });
 
     if (error) throw new Error(error);
@@ -206,7 +212,7 @@ const explicitUsers = (chats) => {
         id: parseInt(id),
         username: chat.usernames[index],
         email: chat.emails[index],
-        image: chat.user_images[index],
+        image: fileSaving.getBase64(PROFILE_IMAGES, chat.user_images[index]),
         has_seen: chat.have_seen ? chat.have_seen[index] : null,
       });
     });

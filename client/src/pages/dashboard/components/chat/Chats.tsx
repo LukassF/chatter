@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useDeferredValue } from "react";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
@@ -15,8 +15,9 @@ import {
 } from "../../../../store/features/availableChatsSlice";
 import { User } from "../../../../store/features/currentUserSlice";
 import ChatCard from "./individual/ChatCard";
+import AvailableChatsSkeleton from "./loaders/AvailableChatsSkeleton";
 
-const Chats = () => {
+const Chats = ({ search }: { search: string | null }) => {
   const dispatch = useAppDispatch();
   const available_chats = useAppSelector(
     (state) => state.available_chats.chats
@@ -32,19 +33,21 @@ const Chats = () => {
 
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setData, setError, setLoading);
 
+  const deferredInput = useDeferredValue(search);
+
   useEffect(() => {
-    if (access_token)
+    if (access_token && !loading)
       fetchData({
-        url: BACKEND_URL + "api/chats/getchats",
+        url: BACKEND_URL + "api/chats/getchats?search=" + deferredInput,
         method: "GET",
         headers: {
           Authorization: "Bearer " + access_token,
         },
       });
-  }, [access_token, trigger_chat_reload]);
+  }, [access_token, trigger_chat_reload, deferredInput]);
 
   useEffect(() => {
     if (data && !error) dispatch(setChats(data.data));
@@ -95,16 +98,19 @@ const Chats = () => {
 
   return (
     <>
-      {loading ? (
-        <div>Loading...</div>
-      ) : available_chats ? (
+      {(loading && (!available_chats || available_chats.length === 0)) ||
+      (search!.length > 0 && loading) ? (
+        <AvailableChatsSkeleton />
+      ) : available_chats && available_chats.length > 0 ? (
         <article className="flex flex-col justify-stretch">
           {available_chats.map((item: Chat, index: number) => (
             <ChatCard item={item} key={index} />
           ))}
         </article>
       ) : (
-        <div>No chats yet</div>
+        <h3 className="m-3 text-md font-medium text-muted">
+          No chats found...
+        </h3>
       )}
     </>
   );
