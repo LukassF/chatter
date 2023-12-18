@@ -18,6 +18,8 @@ const MessageInput = () => {
 
   //
 
+  const [image, setImage] = useState<File | null>(null);
+  const [base64, setBase64] = useState<string | ArrayBuffer | null>(null);
   const [payload, setPayload] = useState<Record<string, any>>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
@@ -25,6 +27,17 @@ const MessageInput = () => {
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   //
+
+  useEffect(() => {
+    if (image && image instanceof File) {
+      (async () => {
+        let base64: string | ArrayBuffer | null = null;
+        if (image) base64 = await toBase64(image);
+
+        setBase64(base64);
+      })();
+    }
+  }, [image]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -34,9 +47,9 @@ const MessageInput = () => {
   const sendMessage = async (event: FormEvent) => {
     event.preventDefault();
     const message = (event.target as any).message.value;
-    const image = (event.target as any).image.files[0] as File;
-    let base64: string | ArrayBuffer | null = null;
-    if (image) base64 = await toBase64(image);
+    // const image = (event.target as any).image.files[0] as File;
+    // let base64: string | ArrayBuffer | null = null;
+    // if (image) base64 = await toBase64(image);
 
     if (!message && !image) return console.log("Message cannot be empty");
     if (!current_user) return console.log("Error getting current user");
@@ -67,6 +80,8 @@ const MessageInput = () => {
     if (!success) return;
 
     if (success && success.data.message_id) {
+      setImage(null);
+      setBase64(null);
       if (inputRef.current) inputRef.current.value = "";
       if (fileRef.current) fileRef.current.value = "";
       ws.onopen = () => {
@@ -89,10 +104,32 @@ const MessageInput = () => {
 
   return (
     <>
+      {base64 && (
+        <div className="bg-stone-100 rounded-lg mx-3 h-28 w-1/2 absolute bottom-16 z-0 flex justify-start items-center p-[8px]">
+          <div className="h-full relative p-[8px]">
+            <div className="h-full aspect-square rounded-md overflow-hidden">
+              <img
+                src={base64 as string}
+                alt="selected-image"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <button
+              onClick={() => {
+                setBase64(null);
+                setImage(null);
+              }}
+              className="w-[20px] hover:bg-blue-300 absolute right-0 top-0 aspect-square rounded-full bg-blue-200 text-blue-600 flex items-center justify-center text-xs"
+            >
+              <i className="fa fa-close"></i>
+            </button>
+          </div>
+        </div>
+      )}
       <form
         onSubmit={sendMessage}
         autoComplete="off"
-        className={`h-full grid ${
+        className={`h-full z-2 relative grid ${
           settings_open
             ? "grid-cols-[13fr_1fr_1fr]"
             : "grid-cols-[18fr_1fr_1fr]"
@@ -111,6 +148,7 @@ const MessageInput = () => {
           ref={fileRef}
           style={{ display: "none" }}
           name="image"
+          onChange={(e) => setImage(e.target?.files ? e.target.files[0] : null)}
         ></input>
         <button
           type="button"

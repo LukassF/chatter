@@ -16,7 +16,7 @@ const ChatBox: FC = () => {
   );
 
   return (
-    <section className="w-full h-screen grid grid-rows-[minmax(0,1fr)_minmax(0,8fr)_minmax(0,1fr)]">
+    <section className="w-full h-screen grid grid-rows-[minmax(0,1fr)_minmax(0,8fr)_minmax(0,1fr)] relative">
       <header className="flex bg-white justify-between items-center px-2 shadow-sm relative">
         <div className="flex items-center gap-2 h-full relative">
           <ChatImage item={selected_chat!} selected={true} />

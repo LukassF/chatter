@@ -1,6 +1,6 @@
 import { useCallback } from "react";
-import { Chat } from "../../../../../store/features/availableChatsSlice";
 import { useAppSelector } from "../../../../../store/store";
+import { Chat } from "../../../../../utils/types";
 
 const ChatImage = ({
   item,

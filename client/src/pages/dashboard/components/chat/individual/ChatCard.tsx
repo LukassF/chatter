@@ -1,15 +1,11 @@
 import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
-import {
-  Chat,
-  setSelectedChat,
-} from "../../../../../store/features/availableChatsSlice";
+import { setSelectedChat } from "../../../../../store/features/availableChatsSlice";
 import { calculateTime } from "../../../../../utils/calculateTime";
 import ChatImage from "./ChatImage";
+import { Chat } from "../../../../../utils/types";
 
 const ChatCard = ({ item }: { item: Chat }) => {
-  console.log(item);
-  // console.log(item);
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const selected_chat = useAppSelector(
@@ -55,12 +51,14 @@ const ChatCard = ({ item }: { item: Chat }) => {
             }}
           >
             <span>
-              {determineUser(item.message_user_id, item.users)?.id ===
-              current_user?.id
-                ? "You: "
-                : `${
-                    determineUser(item.message_user_id, item.users)?.username
-                  }: `}
+              {item.message_user_id
+                ? determineUser(item.message_user_id, item.users)?.id ===
+                  current_user?.id
+                  ? "You: "
+                  : `${
+                      determineUser(item.message_user_id, item.users)?.username
+                    }: `
+                : ""}
             </span>
             <span>{item.message ? item.message : "Image sent"} </span>
           </span>

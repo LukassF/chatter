@@ -3,7 +3,6 @@ import { fetchApi } from "../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
-  Chat,
   addChats,
   addMessage,
   pushToTop,
@@ -16,6 +15,7 @@ import {
 import { User } from "../../../../store/features/currentUserSlice";
 import ChatCard from "./individual/ChatCard";
 import AvailableChatsSkeleton from "./loaders/AvailableChatsSkeleton";
+import { Chat } from "../../../../utils/types";
 
 const Chats = ({ search }: { search: string | null }) => {
   const dispatch = useAppDispatch();

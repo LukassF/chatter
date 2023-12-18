@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
-import { Message } from "../../../../utils/types";
+import { ChatMember, Message } from "../../../../utils/types";
 import { useAppSelector } from "../../../../store/store";
-import { ChatMember } from "../../../../store/features/availableChatsSlice";
 
 const IndividualMessage = ({
   item,
@@ -14,12 +13,7 @@ const IndividualMessage = ({
   next: Message | null;
   chat_users: ChatMember[];
 }) => {
-  // console.log(item);
-  const messages = useAppSelector((state) => state.available_chats.messages);
   const current_user = useAppSelector((state) => state.current_user.user);
-  const selected_chat = useAppSelector(
-    (state) => state.available_chats.selected_chat
-  );
 
   const deltaTimePrev = useMemo(() => {
     if (!prev) return 11;
@@ -75,11 +69,11 @@ const IndividualMessage = ({
 
     if (standalone) return "rounded-2xl";
     else if (last_message || standalone_with_image)
-      return `rounded-2xl ${isMine(item) ? "rounded-tr-sm" : "rounded-tl-sm"}`;
+      return `rounded-2xl ${isMine(item) ? "rounded-tr-md" : "rounded-tl-md"}`;
     else if (first_message_with_image || middle_message)
-      return `rounded-sm  ${isMine(item) ? "rounded-s-2xl" : "rounded-e-2xl"}`;
+      return `rounded-md  ${isMine(item) ? "rounded-s-2xl" : "rounded-e-2xl"}`;
     else if (first_message)
-      return `rounded-2xl ${isMine(item) ? "rounded-br-sm" : "rounded-bl-sm"}`;
+      return `rounded-2xl ${isMine(item) ? "rounded-br-md" : "rounded-bl-md"}`;
   }, [item, next, prev]);
 
   const determineUser = useMemo(() => {
@@ -91,7 +85,8 @@ const IndividualMessage = ({
       {/* Delta time dividor for far apart messages */}
       {deltaTimePrev > 10 && (
         <div className="self-center text-xs text-stone-500 my-3">
-          {new Date(item.created_at).toDateString().slice(0, -4)}{" "}
+          {new Date(item.created_at).toDateString().slice(0, -4)}
+          {" - "}
           {new Date(item.created_at).getHours()}:
           {new Date(item.created_at).getMinutes().toString().padStart(2, "0")}
         </div>
@@ -115,9 +110,13 @@ const IndividualMessage = ({
           fontSize: !item.user_id ? "10px" : "15px",
           color: !item.user_id ? "grey" : "",
         }}
-        className={`flex flex-row gap-2 items-end relative ${
-          isMine(item) ? "pr-3" : "pl-3"
-        } max-w-[60%]`}
+        className={`grid gap-2 items-end relative ${
+          isMine(item)
+            ? "pr-3 grid-cols-1 "
+            : item.user_id
+            ? "pl-3 grid-cols-[minmax(0,27px)_minmax(0,10fr)]"
+            : ""
+        } max-w-[55%]`}
       >
         {!isMine(item) && item.user_id && (
           <div
@@ -163,13 +162,13 @@ const IndividualMessage = ({
           {/* Message content */}
           {item.content && (
             <div
-              className={`${
+              className={` ${
                 item.user_id
                   ? isMine(item)
-                    ? "bg-blue-500 text-white text-right "
-                    : "bg-stone-200 text-left "
+                    ? "bg-blue-500 text-white "
+                    : "bg-stone-200 "
                   : ""
-              } py-1 px-3 w-auto ${elStyle}`}
+              } py-[6px] px-3 w-auto ${elStyle}`}
             >
               {item.content}
             </div>
@@ -182,25 +181,27 @@ const IndividualMessage = ({
             isMine(item) ? "pr-5 self-end" : "pl-14 self-start"
           } flex gap-[1.5px]`}
         >
-          {chat_users.map((user, index) => {
-            if (user.has_seen === item.id)
-              return (
-                <div
-                  key={index}
-                  className="w-[12px] aspect-square rounded-full overflow-hidden"
-                >
-                  <img
-                    className="w-full h-full object-cover"
-                    src={
-                      user.image
-                        ? user.image
-                        : "https://img.freepik.com/premium-photo/natural-marble-pattern-background_1258-22160.jpg"
-                    }
-                    alt="profile-image"
-                  />
-                </div>
-              );
-          })}
+          {chat_users
+            .filter((user) => user.id != current_user?.id)
+            .map((user, index) => {
+              if (user.has_seen === item.id)
+                return (
+                  <div
+                    key={index}
+                    className="w-[12px] aspect-square rounded-full overflow-hidden"
+                  >
+                    <img
+                      className="w-full h-full object-cover"
+                      src={
+                        user.image
+                          ? user.image
+                          : "https://img.freepik.com/premium-photo/natural-marble-pattern-background_1258-22160.jpg"
+                      }
+                      alt="profile-image"
+                    />
+                  </div>
+                );
+            })}
         </div>
       )}
     </>

@@ -94,9 +94,9 @@ const Dashboard: FC = () => {
             : "lg:grid-cols-[1.2fr_2.9fr]"
         } divide-x-2`}
       >
-        <article className=" py-3 grid grid-rows-[minmax(0,1fr)_minmax(0,3.5fr)] h-screen">
-          <div className="flex flex-col gap-3 justify-evenly">
-            <div className="flex justify-between items-center px-3">
+        <article className=" py-3 grid grid-rows-[minmax(0,1fr)_minmax(0,4fr)] gap-2 h-screen">
+          <div className="flex flex-col gap-2 justify-evenly">
+            <div className="flex justify-between items-center px-4">
               <h1 className="text-2xl font-bold">Chats</h1>
               <button className=" p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-sm flex justify-center items-center opacity-70">
                 <i className="fa fa-add"></i>
@@ -116,7 +116,7 @@ const Dashboard: FC = () => {
               />
             </div>
 
-            <hr className="mx-3"></hr>
+            {/* <hr className="mx-3"></hr> */}
           </div>
 
           {current_user && <Chats search={chatsearch} />}

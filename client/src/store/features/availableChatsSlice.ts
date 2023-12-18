@@ -1,24 +1,10 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Message } from "../../utils/types";
+import { Chat, Message } from "../../utils/types";
 
-export interface ChatMember {
-  id: number | null;
-  username: string | null;
-  email: string | null;
-  image: string | null;
-  has_seen: number | null;
-}
-export interface Chat {
-  id: number | null;
-  name: string | null;
-  image: string | null;
-  created_at: string;
-  updated_at: string;
-  users?: ChatMember[];
-  message: number;
-  message_created_at: string;
-  message_user_id: number;
-  last_message_id: number | null;
+export enum Settings {
+  name = "name",
+  image = "image",
+  users = "users",
 }
 
 interface ChatState {
@@ -29,6 +15,7 @@ interface ChatState {
   trigger_chat_reload: number;
   trigger_message_reload: number;
   last_seen_message: number | null | undefined;
+  current_setting: Settings | null;
 }
 
 const initialState: ChatState = {
@@ -39,6 +26,7 @@ const initialState: ChatState = {
   trigger_chat_reload: 0,
   trigger_message_reload: 0,
   last_seen_message: null,
+  current_setting: null,
 };
 
 export const availableChatsSlice = createSlice({
@@ -63,6 +51,10 @@ export const availableChatsSlice = createSlice({
         (a, b) =>
           Number(new Date(b.updated_at)) - Number(new Date(a.updated_at))
       );
+    },
+    setCurrentSetting: (state, action: PayloadAction<Settings | null>) => {
+      console.log(action.payload);
+      state.current_setting = action.payload;
     },
 
     pushToTop: (state, action: PayloadAction<number>) => {
@@ -203,4 +195,5 @@ export const {
   setLastMessage,
   setLastSeenMessage,
   setUserHasSeen,
+  setCurrentSetting,
 } = availableChatsSlice.actions;

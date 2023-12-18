@@ -7,7 +7,10 @@ import {
   useState,
 } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
-import { toggleSettings } from "../../../../../store/features/availableChatsSlice";
+import {
+  Settings,
+  setCurrentSetting,
+} from "../../../../../store/features/availableChatsSlice";
 import {
   ALLOWED_TYPES,
   BACKEND_URL,
@@ -242,53 +245,63 @@ const ChatSettings = () => {
   }, [success]);
 
   return (
-    <section className="flex flex-col overflow-auto h-full p-2 justify-between gap-4">
-      <div className="flex flex-col gap-5">
-        <h2 className="text-lg font-semibold text-center mt-2">
-          Chat {selected_chat?.name} settings
-        </h2>
+    <>
+      <section className="flex flex-col overflow-auto h-full py-5 px-2 justify-between gap-4">
+        <div className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold text-center mt-2">
+            Chat {selected_chat?.name} settings
+          </h2>
 
-        <div className="flex flex-col gap-1 items-stretch [&>*]:text-left [&>*]:px-3 [&>*]:py-2 [&>*]:rounded-md">
-          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
-            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
-              <i className="fa fa-pencil"></i>
-            </div>
-            Change chat name
-          </button>
+          <div className="flex flex-col gap-1 items-stretch [&>*]:text-left [&>*]:px-3 [&>*]:py-2 [&>*]:rounded-md">
+            <button
+              onClick={() => dispatch(setCurrentSetting(Settings.name))}
+              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+            >
+              <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+                <i className="fa fa-pencil"></i>
+              </div>
+              Change chat name
+            </button>
 
-          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
-            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
-              <i className="fa fa-image"></i>
-            </div>
-            Select image
-          </button>
-          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
-            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
-              <i className="far fa-address-book"></i>
-            </div>
-            Manage users
-          </button>
-          <button
-            onClick={() => leaveChat()}
-            className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
-          >
-            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
-              <i className="fa fa-sign-out"></i>
-            </div>
-            Leave chat
-          </button>
-          <button
-            onClick={() => deleteChat()}
-            className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
-          >
-            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
-              <i className="far fa-window-close"></i>
-            </div>
-            Delete chat
-          </button>
+            <button
+              onClick={() => dispatch(setCurrentSetting(Settings.image))}
+              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+            >
+              <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+                <i className="fa fa-image"></i>
+              </div>
+              Select image
+            </button>
+            <button
+              onClick={() => dispatch(setCurrentSetting(Settings.users))}
+              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+            >
+              <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+                <i className="far fa-address-book"></i>
+              </div>
+              Manage users
+            </button>
+            <button
+              onClick={() => leaveChat()}
+              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+            >
+              <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+                <i className="fa fa-sign-out"></i>
+              </div>
+              Leave chat
+            </button>
+            <button
+              onClick={() => deleteChat()}
+              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+            >
+              <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+                <i className="far fa-window-close"></i>
+              </div>
+              Delete chat
+            </button>
+          </div>
         </div>
-      </div>
-      {/* <form
+        {/* <form
         onSubmit={changeData}
         style={{ display: "flex", flexDirection: "column" }}
       >
@@ -330,10 +343,11 @@ const ChatSettings = () => {
         onChange={(e) => setInput(e.target.value)}
       ></input>
       <FoundUsersList setUsers={setSelectedUsers} input={input} /> */}
-      <footer className="text-sm xs:text-md text-center font-light mb-3">
-        2023 Chatter ©
-      </footer>
-    </section>
+        <footer className="text-xs xs:text-md text-center font-light">
+          2023 Chatter ©
+        </footer>
+      </section>
+    </>
   );
 };
 
