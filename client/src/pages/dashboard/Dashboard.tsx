@@ -14,6 +14,7 @@ import { deleteTokens } from "../../store/features/tokensSlice";
 import Aside from "./components/other/Aside";
 import AvailableChatsSkeleton from "./components/chat/loaders/AvailableChatsSkeleton";
 import ChatBox from "./components/chat/ChatBox";
+import NoChatSelected from "./components/chat/loaders/NoChatSelected";
 
 const Dashboard: FC = () => {
   const dispatch = useAppDispatch();
@@ -93,35 +94,35 @@ const Dashboard: FC = () => {
             : "lg:grid-cols-[1.2fr_2.9fr]"
         } divide-x-2`}
       >
-        <article className=" py-3 flex flex-col items-stretch gap-3">
-          <div className="flex justify-between items-center px-3">
-            <h1 className="text-2xl font-bold">Chats</h1>
-            <button className=" p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-sm flex justify-center items-center opacity-70">
-              <i className="fa fa-add"></i>
-            </button>
-          </div>
+        <article className=" py-3 grid grid-rows-[minmax(0,1fr)_minmax(0,3.5fr)] h-screen">
+          <div className="flex flex-col gap-3 justify-evenly">
+            <div className="flex justify-between items-center px-3">
+              <h1 className="text-2xl font-bold">Chats</h1>
+              <button className=" p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-sm flex justify-center items-center opacity-70">
+                <i className="fa fa-add"></i>
+              </button>
+            </div>
 
-          <div className="px-3">
-            <input
-              onChange={(e) => setChatSearch(e.target.value)}
-              type="text"
-              placeholder="&#xf002; Search"
-              className="form-control py-2 rounded-full text-sm"
-              style={{
-                fontFamily: "'Helvetica', FontAwesome, sans-serif",
-                fontStyle: "normal",
-              }}
-            />
-          </div>
+            <div className="px-3">
+              <input
+                onChange={(e) => setChatSearch(e.target.value)}
+                type="text"
+                placeholder="&#xf002; Search"
+                className="form-control py-2 rounded-full text-sm"
+                style={{
+                  fontFamily: "'Helvetica', FontAwesome, sans-serif",
+                  fontStyle: "normal",
+                }}
+              />
+            </div>
 
-          <hr className="mx-3"></hr>
+            <hr className="mx-3"></hr>
+          </div>
 
           {current_user && <Chats search={chatsearch} />}
         </article>
-        <article>
-          {selected_chat ? <ChatBox /> : <div>No chat selected</div>}
-        </article>
-        <article>
+        <article>{selected_chat ? <ChatBox /> : <NoChatSelected />}</article>
+        <article className="max-h-screen overflow-hidden">
           {settings_open && <ChatSettings />}
           {/* {current_user?.id && (
             <div>

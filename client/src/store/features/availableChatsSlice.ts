@@ -159,8 +159,8 @@ export const availableChatsSlice = createSlice({
       state.last_seen_message = action.payload;
     },
 
-    toggleSettings: (state, action: PayloadAction<boolean>) => {
-      state.settings_open = action.payload;
+    toggleSettings: (state) => {
+      state.settings_open = !state.settings_open;
     },
 
     setUserHasSeen: (state, action: PayloadAction<any>) => {

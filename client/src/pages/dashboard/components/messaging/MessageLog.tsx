@@ -135,7 +135,7 @@ const MessageLog = () => {
     return () => ws.close();
   }, []);
 
-  useEffect(() => console.log(selected_chat), [selected_chat]);
+  // useEffect(() => console.log(selected_chat), [selected_chat]);
 
   return (
     <div

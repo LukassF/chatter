@@ -3,8 +3,14 @@ export const calculateTime = (date_str: string): string => {
 
   const now = new Date();
 
+  let num_now = Number(now);
+  let num_given =
+    Number(given_date) + 60 * 60 * 1000 > num_now
+      ? Number(given_date)
+      : Number(given_date) + 60 * 60 * 1000;
+
   //timezone operations
-  const time = Number(now) - (Number(given_date) + 60 * 60 * 1000);
+  const time = num_now - num_given;
 
   const msecs_in_year = 1000 * 60 * 60 * 24 * 365;
   const msecs_in_month = 1000 * 60 * 60 * 24 * 30;

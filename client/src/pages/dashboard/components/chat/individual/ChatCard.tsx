@@ -8,6 +8,7 @@ import { calculateTime } from "../../../../../utils/calculateTime";
 import ChatImage from "./ChatImage";
 
 const ChatCard = ({ item }: { item: Chat }) => {
+  console.log(item);
   // console.log(item);
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
@@ -34,7 +35,7 @@ const ChatCard = ({ item }: { item: Chat }) => {
   return (
     <div
       onClick={() => dispatch(setSelectedChat(item))}
-      className="grid grid-cols-[1fr_7fr] min-h-[30px] justify-center items-center hover:bg-stone-100 cursor-pointer bg-opacity-70 px-2 transition-all py-1"
+      className="grid grid-cols-[1fr_7fr] min-h-[70px] justify-center items-center hover:bg-stone-100 cursor-pointer bg-opacity-70 px-2 transition-all py-1"
     >
       <ChatImage item={item} />
       <div className=" p-[7px] grid grid-rows-[1fr_1.1fr]">
@@ -69,17 +70,6 @@ const ChatCard = ({ item }: { item: Chat }) => {
           </span>
         </div>
       </div>
-
-      {/* <ul style={{ listStyle: "none", padding: "0px" }}>
-              {item.users?.map((user, id: number) => (
-                <li
-                  style={{ fontSize: "15px", color: "grey" }}
-                  key={index + id}
-                >
-                  {user.username}
-                </li>
-              ))}
-            </ul> */}
     </div>
   );
 };

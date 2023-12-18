@@ -17,6 +17,7 @@ import { fetchApi } from "../../../../../utils/api/fetchApi";
 import FoundUsersList from "../../../../../components/FoundUsersList";
 import { User } from "../../../../../store/features/currentUserSlice";
 import { toBase64 } from "../../../../../utils/api/toBase64";
+import Swal from "sweetalert2";
 
 const ChatSettings = () => {
   const dispatch = useAppDispatch();
@@ -154,11 +155,17 @@ const ChatSettings = () => {
   }, [selected_chat, current_user]);
 
   const deleteChat = useCallback(() => {
-    let confirmed = confirm(
-      "Are you sure? ALl content in this chat will be lost."
-    );
-
-    if (confirmed) setPerformDelete(true);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "All content in this chat will be lost.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "I'm sure!",
+    }).then((result) => {
+      if (result.isConfirmed) setPerformDelete(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -235,21 +242,53 @@ const ChatSettings = () => {
   }, [success]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <h4>
-        Settings
-        <span
-          style={{ marginLeft: "20px" }}
-          onClick={() => dispatch(toggleSettings(false))}
-        >
-          X
-        </span>
-      </h4>
-      <button onClick={() => leaveChat()}>Leave chat</button>
-      <button onClick={() => deleteChat()}>Delete chat</button>
+    <section className="flex flex-col overflow-auto h-full p-2 justify-between gap-4">
+      <div className="flex flex-col gap-5">
+        <h2 className="text-lg font-semibold text-center mt-2">
+          Chat {selected_chat?.name} settings
+        </h2>
 
-      <hr></hr>
-      <form
+        <div className="flex flex-col gap-1 items-stretch [&>*]:text-left [&>*]:px-3 [&>*]:py-2 [&>*]:rounded-md">
+          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
+            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+              <i className="fa fa-pencil"></i>
+            </div>
+            Change chat name
+          </button>
+
+          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
+            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+              <i className="fa fa-image"></i>
+            </div>
+            Select image
+          </button>
+          <button className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm">
+            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+              <i className="far fa-address-book"></i>
+            </div>
+            Manage users
+          </button>
+          <button
+            onClick={() => leaveChat()}
+            className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+          >
+            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+              <i className="fa fa-sign-out"></i>
+            </div>
+            Leave chat
+          </button>
+          <button
+            onClick={() => deleteChat()}
+            className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+          >
+            <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
+              <i className="far fa-window-close"></i>
+            </div>
+            Delete chat
+          </button>
+        </div>
+      </div>
+      {/* <form
         onSubmit={changeData}
         style={{ display: "flex", flexDirection: "column" }}
       >
@@ -290,8 +329,11 @@ const ChatSettings = () => {
         placeholder="find"
         onChange={(e) => setInput(e.target.value)}
       ></input>
-      <FoundUsersList setUsers={setSelectedUsers} input={input} />
-    </div>
+      <FoundUsersList setUsers={setSelectedUsers} input={input} /> */}
+      <footer className="text-sm xs:text-md text-center font-light mb-3">
+        2023 Chatter ©
+      </footer>
+    </section>
   );
 };
 

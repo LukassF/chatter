@@ -71,13 +71,13 @@ const Chats = ({ search }: { search: string | null }) => {
     const ws = new WebSocket(WEBSOCKET_URL);
     ws.onmessage = (msg) => {
       const message = typeof msg.data == "string" && JSON.parse(msg.data);
-      // console.log(data);
       if (
         message.type === "chat" &&
         message.users.find((val: User) => val.id === current_user?.id)
       )
         dispatch(triggerChatReload());
       else if (message.type == "message") {
+        console.log(message);
         dispatch(addMessage(message));
 
         dispatch(
@@ -110,9 +110,11 @@ const Chats = ({ search }: { search: string | null }) => {
       (search!.length > 0 && loading) ? (
         <AvailableChatsSkeleton />
       ) : available_chats && available_chats.length > 0 ? (
-        <article className="flex flex-col justify-stretch">
+        <article className="flex flex-col justify-stretch overflow-auto">
           {available_chats.map((item: Chat, index: number) => (
-            <ChatCard item={item} key={index} />
+            <>
+              <ChatCard item={item} key={index} />
+            </>
           ))}
         </article>
       ) : (

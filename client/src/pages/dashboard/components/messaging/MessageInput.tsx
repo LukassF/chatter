@@ -12,6 +12,9 @@ const MessageInput = () => {
     (state) => state.available_chats.selected_chat
   );
   const dispatch = useAppDispatch();
+  const settings_open = useAppSelector(
+    (state) => state.available_chats.settings_open
+  );
 
   //
 
@@ -61,32 +64,15 @@ const MessageInput = () => {
 
   useEffect(() => {
     const ws = new WebSocket(WEBSOCKET_URL);
+    if (!success) return;
 
-    // ws.onmessage = (msg) => {
-    //   const data = typeof msg.data == "string" && JSON.parse(msg.data);
-
-    //   if (data.type == "message") {
-    //     dispatch(addMessages(data));
-    //     dispatch(triggerChatReload());
-    //     // dispatch(
-    //     //   setLastMessage({
-    //     //     user_id: data.user_id,
-    //     //     chat_id: data.chat_id,
-    //     //     created_at: data.created_at,
-    //     //     message: data.content,
-    //     //   })
-    //     // );
-    //     // dispatch(pushToTop(data.chat_id));
-    //   }
-    // };
-    if (success) {
+    if (success && success.data.message_id) {
       if (inputRef.current) inputRef.current.value = "";
       if (fileRef.current) fileRef.current.value = "";
-
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
-            id: Math.random(),
+            id: success.data.message_id,
             content: payload?.message,
             user_id: payload?.user_id,
             chat_id: payload?.chat_id,
@@ -106,7 +92,11 @@ const MessageInput = () => {
       <form
         onSubmit={sendMessage}
         autoComplete="off"
-        className="h-full grid grid-cols-[12fr_1fr_1fr] gap-2 px-2 py-1 justify-center items-center"
+        className={`h-full grid ${
+          settings_open
+            ? "grid-cols-[13fr_1fr_1fr]"
+            : "grid-cols-[18fr_1fr_1fr]"
+        } gap-2 px-2 py-1 justify-center items-center`}
       >
         <input
           className="rounded-full h-3/4 px-3 border-2 border-stone-200 bg-stone-100 outline-none"

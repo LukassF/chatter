@@ -19,7 +19,8 @@
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-loader-spinner": "^6.1.0",
-    "react-redux": "^9.0.2"
+    "react-redux": "^9.0.2",
+    "sweetalert2": "^11.10.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",

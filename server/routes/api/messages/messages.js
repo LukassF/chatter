@@ -25,7 +25,7 @@ router.post("/send", async (req, res) => {
       .insert(insert_object)
       .select();
 
-    if (error) throw new Error(error);
+    if (error || data.length === 0) throw new Error(error);
 
     const message_id = data[0].id;
     let chat_update = await supabase
@@ -35,7 +35,11 @@ router.post("/send", async (req, res) => {
 
     if (chat_update.error) throw new Error("Could not update chats");
 
-    return res.status(200).json({ success: "Message sent successfully" });
+    return res.status(200).json({
+      success: "Message sent successfully",
+      message_id,
+      type: "message_send",
+    });
   } catch (err) {
     return res
       .status(400)

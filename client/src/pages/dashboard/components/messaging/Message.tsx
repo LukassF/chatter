@@ -14,6 +14,7 @@ const IndividualMessage = ({
   next: Message | null;
   chat_users: ChatMember[];
 }) => {
+  // console.log(item);
   const messages = useAppSelector((state) => state.available_chats.messages);
   const current_user = useAppSelector((state) => state.current_user.user);
   const selected_chat = useAppSelector(
@@ -181,19 +182,15 @@ const IndividualMessage = ({
             isMine(item) ? "pr-5 self-end" : "pl-14 self-start"
           } flex gap-[1.5px]`}
         >
-          {chat_users.map((user) => {
-            if (
-              user.has_seen &&
-              messages &&
-              messages.length > 0 &&
-              (user.has_seen === item.id ||
-                selected_chat?.last_message_id === user.has_seen ||
-                user.has_seen! >=
-                  Math.max(...messages?.map((item) => item.id)!))
-            )
+          {chat_users.map((user, index) => {
+            if (user.has_seen === item.id)
               return (
-                <div className="w-[12px] aspect-square rounded-full overflow-hidden">
+                <div
+                  key={index}
+                  className="w-[12px] aspect-square rounded-full overflow-hidden"
+                >
                   <img
+                    className="w-full h-full object-cover"
                     src={
                       user.image
                         ? user.image

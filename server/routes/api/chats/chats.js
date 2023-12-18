@@ -204,6 +204,25 @@ router.patch("/toggleseen/:user_id", async (req, res) => {
   }
 });
 
+router.get("/lastmessage/:chat_id", async (req, res) => {
+  const chat_id = Number(req.params.chat_id);
+
+  try {
+    if (!chat_id) throw new Error("Chat id not provided");
+
+    const { data, error } = await supabase
+      .from("chats")
+      .select("last_message")
+      .eq("id", chat_id);
+
+    if (error || data.length === 0) throw new Error("Error fetching data");
+
+    return res.status(200).json({ data: data, type: "last_message_fetch" });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not get last message" });
+  }
+});
+
 const explicitUsers = (chats) => {
   chats.map((chat) => {
     const users = [];
