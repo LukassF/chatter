@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Message } from "../../utils/types";
 
-interface ChatMember {
+export interface ChatMember {
   id: number | null;
   username: string | null;
   email: string | null;
@@ -95,6 +95,8 @@ export const availableChatsSlice = createSlice({
     },
 
     setSelectedChat: (state, action: PayloadAction<Chat | undefined>) => {
+      // console.log(action.payload);
+      // if (action.payload?.id == state.selected_chat?.id) return;
       state.selected_chat = action.payload;
       state.settings_open = false;
     },
@@ -132,13 +134,14 @@ export const availableChatsSlice = createSlice({
     },
 
     setLastMessage: (state, action: PayloadAction<any>) => {
+      // console.log(action.payload);
       const element = state.chats.find(
-        (val) => (val.id = action.payload.chat_id)
+        (val) => val.id === action.payload.chat_id
       );
 
       if (!element) return;
 
-      element.message = action.payload.message;
+      element.message = action.payload.content;
       element.message_created_at = action.payload.created_at;
       element.message_user_id = action.payload.user_id;
       element.last_message_id = action.payload.id;
@@ -163,8 +166,6 @@ export const availableChatsSlice = createSlice({
     setUserHasSeen: (state, action: PayloadAction<any>) => {
       const { user_id, chat_id, last_msg_id } = action.payload;
       if (!chat_id || !user_id) return;
-
-      console.log(user_id, chat_id, last_msg_id);
 
       const chat_idx = state.chats.findIndex((chat) => chat.id == chat_id);
 

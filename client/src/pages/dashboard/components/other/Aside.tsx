@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { BACKEND_URL } from "../../../../utils/api/constants";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { deleteTokens } from "../../../../store/features/tokensSlice";
+import { Link } from "react-router-dom";
 
 const Aside = () => {
   const dispatch = useAppDispatch();
@@ -47,8 +48,8 @@ const Aside = () => {
 
       <div className="flex flex-col items-stretch justify-center gap-2">
         {current_user && (
-          <div className="flex justify-center items-center">
-            <div className="max-w-[70%] relative rounded-full aspect-square overflow-hidden cursor-pointer hover:shadow-md">
+          <Link to="/profile" className="flex justify-center items-center">
+            <div className="max-w-[40px] relative rounded-full aspect-square overflow-hidden cursor-pointer hover:shadow-md">
               <img
                 className="w-full h-full object-cover"
                 src={
@@ -59,7 +60,7 @@ const Aside = () => {
                 alt="profile-image"
               />
             </div>
-          </div>
+          </Link>
         )}
         <button
           onClick={logout}

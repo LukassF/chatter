@@ -2,7 +2,13 @@ import { useCallback } from "react";
 import { Chat } from "../../../../../store/features/availableChatsSlice";
 import { useAppSelector } from "../../../../../store/store";
 
-const ChatImage = ({ item }: { item: Chat }) => {
+const ChatImage = ({
+  item,
+  selected = false,
+}: {
+  item: Chat;
+  selected?: boolean;
+}) => {
   const current_user = useAppSelector((state) => state.current_user.user);
 
   const gridLayout = useCallback(() => {
@@ -20,7 +26,11 @@ const ChatImage = ({ item }: { item: Chat }) => {
   }, [item, current_user]);
 
   return (
-    <div className="overflow-hidden  relative rounded-full m-1 w-[47px] aspect-square">
+    <div
+      className={`overflow-hidden  relative rounded-full m-1 ${
+        selected ? "h-3/4 max-h-[50px]" : "w-[45px]"
+      } aspect-square`}
+    >
       {item.image && <img src={item.image} alt="chat-image" />}
       {!item.image && (
         <div

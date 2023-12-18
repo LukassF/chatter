@@ -50,7 +50,9 @@ const Chats = ({ search }: { search: string | null }) => {
   }, [access_token, trigger_chat_reload, deferredInput]);
 
   useEffect(() => {
-    if (data && !error) dispatch(setChats(data.data));
+    if (data && !error) {
+      dispatch(setChats(data.data));
+    }
     if (error) {
       dispatch(setChats([]));
       dispatch(setSelectedChat(undefined));
@@ -58,38 +60,44 @@ const Chats = ({ search }: { search: string | null }) => {
   }, [data, error]);
 
   useEffect(() => {
+    dispatch(
+      setSelectedChat(
+        available_chats.find((val) => val.id === selected_chat?.id)
+      )
+    );
+  }, [available_chats]);
+
+  useEffect(() => {
     const ws = new WebSocket(WEBSOCKET_URL);
     ws.onmessage = (msg) => {
-      const data = typeof msg.data == "string" && JSON.parse(msg.data);
-      console.log(data);
+      const message = typeof msg.data == "string" && JSON.parse(msg.data);
+      // console.log(data);
       if (
-        data.type === "chat" &&
-        data.users.find((val: User) => val.id === current_user?.id)
+        message.type === "chat" &&
+        message.users.find((val: User) => val.id === current_user?.id)
       )
         dispatch(triggerChatReload());
-      else if (data.type == "message") {
-        dispatch(addMessage(data));
-        //TO IMPLEMENT no chat reload but push to top and so on last message bla bla
-        // dispatch(
-        //   setLastMessage({
-        //     chat_id: data.chat_id,
-        //     user_id: data.user_id,
-        //     content: data.content,
-        //     id: data.id,
-        //     created_at: data.created_at,
-        //   })
-        // );
-        // dispatch(pushToTop(data.chat_id));
-        dispatch(triggerChatReload());
-      } else if (data.type == "hasseen") {
-        dispatch(triggerChatReload());
-        // dispatch(
-        //   setUserHasSeen({
-        //     user_id: data.user_id,
-        //     chat_id: data.chat_id,
-        //     last_msg_id: data.last_msg_id,
-        //   })
-        // );
+      else if (message.type == "message") {
+        dispatch(addMessage(message));
+
+        dispatch(
+          setLastMessage({
+            chat_id: message.chat_id,
+            user_id: message.user_id,
+            content: message.content,
+            id: message.id,
+            created_at: message.created_at,
+          })
+        );
+        dispatch(pushToTop(message.chat_id));
+      } else if (message.type == "hasseen") {
+        dispatch(
+          setUserHasSeen({
+            user_id: message.user_id,
+            chat_id: message.chat_id,
+            last_msg_id: message.last_msg_id,
+          })
+        );
       }
     };
 

@@ -70,7 +70,10 @@ const Dashboard: FC = () => {
             users: selected_chat?.users,
             user_id: current_user?.id,
             chat_id: selected_chat?.id,
-            last_msg_id: messages ? messages[messages?.length - 1].id : null,
+            last_msg_id:
+              messages && messages.length > 0
+                ? messages[messages?.length - 1].id
+                : null,
             type: "hasseen",
           })
         );
@@ -83,7 +86,13 @@ const Dashboard: FC = () => {
   return (
     <main className="grid grid-cols-[1fr_14fr] divide-x-2 overflow-hidden h-screen">
       <Aside />
-      <section className="grid grid-cols-[1fr_1.8fr] lg:grid-cols-[1.2fr_2fr_0.9fr] divide-x-2">
+      <section
+        className={`grid grid-cols-[1fr_1.8fr] ${
+          settings_open
+            ? "lg:grid-cols-[1.2fr_2fr_0.9fr]"
+            : "lg:grid-cols-[1.2fr_2.9fr]"
+        } divide-x-2`}
+      >
         <article className=" py-3 flex flex-col items-stretch gap-3">
           <div className="flex justify-between items-center px-3">
             <h1 className="text-2xl font-bold">Chats</h1>
@@ -113,8 +122,7 @@ const Dashboard: FC = () => {
           {selected_chat ? <ChatBox /> : <div>No chat selected</div>}
         </article>
         <article>
-          <ModifyProfile />
-          <hr></hr>
+          {settings_open && <ChatSettings />}
           {/* {current_user?.id && (
             <div>
               {current_user?.username}

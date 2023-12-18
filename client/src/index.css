@@ -13,6 +13,8 @@
 
 * {
   font-family: Arial, Helvetica, sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(200, 200, 200) transparent;
 }
 
 .form-control {
@@ -34,4 +36,17 @@
   );
   background-size: 300%;
   animation: shine 0.8s linear alternate infinite;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+::-webkit-scrollbar-track-piece {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgb(200, 200, 200);
 }

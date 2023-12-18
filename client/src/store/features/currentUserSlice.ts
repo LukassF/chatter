@@ -20,8 +20,6 @@ const initialState: UserState = {
 };
 
 export const fetchUser = createAsyncThunk("fetch_user", async (user: User) => {
-  console.log(user);
-
   // if (!user.image) return;
 
   const state = store.getState();
@@ -47,7 +45,6 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
-      console.log(action.payload);
       state.user = action.payload;
     },
   },
@@ -55,7 +52,6 @@ export const userSlice = createSlice({
     builder.addCase(
       fetchUser.fulfilled,
       (state, action: PayloadAction<any>) => {
-        console.log(action.payload);
         state.user = action.payload;
       }
     );

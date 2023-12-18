@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
@@ -7,18 +7,23 @@ import {
   setLastSeenMessage,
   setMessages,
   setSelectedChat,
-  toggleSettings,
 } from "../../../../store/features/availableChatsSlice";
 import IndividualMessage from "./Message";
 import MessagesSkeleton from "../chat/loaders/MessagesSkeleton";
 import { RotatingLines } from "react-loader-spinner";
 
 const MessageLog = () => {
+  //helper to reload last selected chat
+  const [lastSelected, setLastSelected] = useState<number>(0);
+
   const dispatch = useAppDispatch();
   const messages = useAppSelector((state) => state.available_chats.messages);
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
   );
+
+  //helper to prevent from refetching data when selecting the same chat
+  const init_selected_chat = useMemo(() => selected_chat?.id, [lastSelected]);
   const available_chats = useAppSelector(
     (state) => state.available_chats.chats
   );
@@ -101,13 +106,16 @@ const MessageLog = () => {
 
   //reseting all options on chat change
   useEffect(() => {
+    if (selected_chat?.id == init_selected_chat) return;
     dispatch(setMessages([]));
     setRange([0, 19]);
     setScrollPos(0);
+    setLastSelected((prev) => prev + 1);
   }, [selected_chat]);
 
   //restoring scroll position and setting last message on messages change
   useEffect(() => {
+    // console.log(messages![messages?.length! - 1]);
     if (messages && messages.length > 0)
       dispatch(setLastSeenMessage(messages[messages.length - 1]?.id));
     restoreScrollPos();
@@ -118,14 +126,16 @@ const MessageLog = () => {
     const ws = new WebSocket(WEBSOCKET_URL);
 
     ws.onmessage = (msg) => {
-      const data = typeof msg.data == "string" && JSON.parse(msg.data);
+      const message = typeof msg.data == "string" && JSON.parse(msg.data);
 
-      if (data && data.type == "message" && data.user_id === current_user?.id)
+      if (message && message.type == "message")
         messageEndRef.current?.scrollIntoView();
     };
 
     return () => ws.close();
   }, []);
+
+  useEffect(() => console.log(selected_chat), [selected_chat]);
 
   return (
     <div
@@ -151,7 +161,13 @@ const MessageLog = () => {
         )}
         {messages && messages.length > 0 ? (
           messages.map((item, index) => (
-            <IndividualMessage item={item} key={index} />
+            <IndividualMessage
+              item={item}
+              prev={messages[index - 1] ? messages[index - 1] : null}
+              next={messages[index + 1] ? messages[index + 1] : null}
+              chat_users={selected_chat?.users!}
+              key={index}
+            />
           ))
         ) : error ? (
           <div>Timeout error occured, please try again</div>

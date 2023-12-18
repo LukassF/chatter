@@ -47,7 +47,6 @@ export const fetchApi = (
     try {
       let data = await axios.request(params);
       setData(data);
-      console.log(data);
     } catch (err: any) {
       setError(err);
       setData(null);

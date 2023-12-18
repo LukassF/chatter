@@ -8,6 +8,7 @@ import { calculateTime } from "../../../../../utils/calculateTime";
 import ChatImage from "./ChatImage";
 
 const ChatCard = ({ item }: { item: Chat }) => {
+  // console.log(item);
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const selected_chat = useAppSelector(
