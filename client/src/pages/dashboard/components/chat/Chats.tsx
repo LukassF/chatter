@@ -10,6 +10,7 @@ import {
   setLastMessage,
   setSelectedChat,
   setUserHasSeen,
+  toggleSettings,
   triggerChatReload,
 } from "../../../../store/features/availableChatsSlice";
 import { User } from "../../../../store/features/currentUserSlice";
@@ -77,7 +78,6 @@ const Chats = ({ search }: { search: string | null }) => {
       )
         dispatch(triggerChatReload());
       else if (message.type == "message") {
-        console.log(message);
         dispatch(addMessage(message));
 
         dispatch(
@@ -112,9 +112,7 @@ const Chats = ({ search }: { search: string | null }) => {
       ) : available_chats && available_chats.length > 0 ? (
         <article className="flex flex-col justify-stretch overflow-auto">
           {available_chats.map((item: Chat, index: number) => (
-            <>
-              <ChatCard item={item} key={index} />
-            </>
+            <ChatCard item={item} key={index} />
           ))}
         </article>
       ) : (

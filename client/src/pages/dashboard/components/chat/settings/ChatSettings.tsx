@@ -17,10 +17,11 @@ import {
   WEBSOCKET_URL,
 } from "../../../../../utils/api/constants";
 import { fetchApi } from "../../../../../utils/api/fetchApi";
-import FoundUsersList from "../../../../../components/FoundUsersList";
 import { User } from "../../../../../store/features/currentUserSlice";
 import { toBase64 } from "../../../../../utils/api/toBase64";
 import Swal from "sweetalert2";
+import { ChatMember } from "../../../../../utils/types";
+import UsersList from "../../../../../components/UsersList";
 
 const ChatSettings = () => {
   const dispatch = useAppDispatch();
@@ -37,6 +38,7 @@ const ChatSettings = () => {
   const [selectedUsers, setSelectedUsers] = useState<User[] | undefined>(
     selected_chat?.users
   );
+  const [collapse, setCollapse] = useState<boolean>(false);
   const [input, setInput] = useState<string>();
   const [payload, setPayload] = useState<Record<any, any>>();
   const [perform_delete, setPerformDelete] = useState<boolean>(false);
@@ -127,34 +129,40 @@ const ChatSettings = () => {
   );
 
   const leaveChat = useCallback(() => {
-    let confirmed: boolean | undefined;
-    if (selected_chat?.users && selected_chat.users.length <= 2)
-      confirmed = confirm("Be careful, if you leave the chat will be deleted!");
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This action is irreversible",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "I'm sure!",
+    }).then((result) => {
+      if (!result.isConfirmed) return;
 
-    if (!confirmed && confirmed != undefined) return;
+      setSelectedUsers((prev) =>
+        prev?.filter((item) => item.id != current_user?.id)
+      );
 
-    setSelectedUsers((prev) =>
-      prev?.filter((item) => item.id != current_user?.id)
-    );
+      let users = selectedUsers
+        ?.filter((item) => item.id != current_user?.id)
+        .map((user) => user.id?.toString());
 
-    let users = selectedUsers
-      ?.filter((item) => item.id != current_user?.id)
-      .map((user) => user.id?.toString());
-
-    if (users && users.length > 1)
-      setPayload({
-        chat_id: selected_chat?.id,
-        message: {
-          content: "User " + current_user?.username + " has left the chat",
+      if (users && users.length > 1)
+        setPayload({
           chat_id: selected_chat?.id,
-        },
-        base64: "",
-        name: "",
-        users,
-        added_users: [],
-        removed_users: [],
-      });
-    else setPerformDelete(true);
+          message: {
+            content: "User " + current_user?.username + " has left the chat",
+            chat_id: selected_chat?.id,
+          },
+          base64: "",
+          name: "",
+          users,
+          added_users: [],
+          removed_users: [],
+        });
+      else setPerformDelete(true);
+    });
   }, [selected_chat, current_user]);
 
   const deleteChat = useCallback(() => {
@@ -246,16 +254,21 @@ const ChatSettings = () => {
 
   return (
     <>
-      <section className="flex flex-col overflow-auto h-full py-5 px-2 justify-between gap-4">
-        <div className="flex flex-col gap-3">
+      <section className="overflow-auto h-full py-3 px-2 justify-between gap-4">
+        <div className="flex flex-col gap-3 h-auto">
+          <div className="flex justify-center">
+            <div className="min-h-[100px] aspect-square bg-stone-100 rounded-full flex justify-center items-center text-4xl text-blue-600">
+              <i className="fa fa-cogs"></i>
+            </div>
+          </div>
           <h2 className="text-lg font-semibold text-center mt-2">
-            Chat {selected_chat?.name} settings
+            {selected_chat?.name} settings
           </h2>
 
-          <div className="flex flex-col gap-1 items-stretch [&>*]:text-left [&>*]:px-3 [&>*]:py-2 [&>*]:rounded-md">
+          <div className="flex flex-col gap-1 items-stretch [&>*]:text-left  [&>*]:rounded-md ">
             <button
               onClick={() => dispatch(setCurrentSetting(Settings.name))}
-              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+              className="min-h-[50px] px-3 py-2 hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
             >
               <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
                 <i className="fa fa-pencil"></i>
@@ -265,25 +278,34 @@ const ChatSettings = () => {
 
             <button
               onClick={() => dispatch(setCurrentSetting(Settings.image))}
-              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+              className="min-h-[50px] px-3 py-2 hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
             >
               <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
                 <i className="fa fa-image"></i>
               </div>
               Select image
             </button>
+
             <button
-              onClick={() => dispatch(setCurrentSetting(Settings.users))}
-              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+              onClick={() => setCollapse((prev: boolean) => !prev)}
+              // onClick={() => dispatch(setCurrentSetting(Settings.users))}
+              className="min-h-[50px] px-3 py-2 hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
             >
               <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
                 <i className="far fa-address-book"></i>
               </div>
               Manage users
             </button>
+            <div
+              className={`${
+                collapse ? "h-auto" : "h-[0px]"
+              } transition-all duration-500 px-2`}
+            >
+              <UsersList chat={selected_chat} />
+            </div>
             <button
               onClick={() => leaveChat()}
-              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+              className="min-h-[50px] px-3 py-2 hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
             >
               <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
                 <i className="fa fa-sign-out"></i>
@@ -292,7 +314,7 @@ const ChatSettings = () => {
             </button>
             <button
               onClick={() => deleteChat()}
-              className="hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
+              className="min-h-[50px] px-3 py-2 hover:bg-stone-100 flex justify-start items-center gap-2 font-light text-sm"
             >
               <div className="h-full min-h-[30px] aspect-square bg-blue-100 text-xs rounded-full flex justify-center items-center text-blue-500 ">
                 <i className="far fa-window-close"></i>
@@ -343,9 +365,6 @@ const ChatSettings = () => {
         onChange={(e) => setInput(e.target.value)}
       ></input>
       <FoundUsersList setUsers={setSelectedUsers} input={input} /> */}
-        <footer className="text-xs xs:text-md text-center font-light">
-          2023 Chatter ©
-        </footer>
       </section>
     </>
   );

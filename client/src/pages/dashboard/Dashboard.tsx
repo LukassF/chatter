@@ -20,7 +20,6 @@ const Dashboard: FC = () => {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const access_token = useAppSelector((state) => state.tokens.access_token);
-  const refresh_token = useAppSelector((state) => state.tokens.refresh_token);
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
   );
@@ -85,13 +84,13 @@ const Dashboard: FC = () => {
   }, [success]);
 
   return (
-    <main className="grid grid-cols-[1fr_14fr] divide-x-2 overflow-hidden h-screen">
+    <main className="grid grid-cols-[1fr_16fr] divide-x-2 overflow-hidden h-screen">
       <Aside />
       <section
         className={`grid grid-cols-[1fr_1.8fr] ${
           settings_open
-            ? "lg:grid-cols-[1.2fr_2fr_0.9fr]"
-            : "lg:grid-cols-[1.2fr_2.9fr]"
+            ? "lg:grid-cols-[1.1fr_2fr_1fr]"
+            : "lg:grid-cols-[1.1fr_3fr]"
         } divide-x-2`}
       >
         <article className=" py-3 grid grid-rows-[minmax(0,1fr)_minmax(0,4fr)] gap-2 h-screen">

@@ -53,7 +53,6 @@ export const availableChatsSlice = createSlice({
       );
     },
     setCurrentSetting: (state, action: PayloadAction<Settings | null>) => {
-      console.log(action.payload);
       state.current_setting = action.payload;
     },
 
@@ -90,7 +89,7 @@ export const availableChatsSlice = createSlice({
       // console.log(action.payload);
       // if (action.payload?.id == state.selected_chat?.id) return;
       state.selected_chat = action.payload;
-      state.settings_open = false;
+      // state.settings_open = false;
     },
 
     setMessages: (state, action: PayloadAction<Message[]>) => {
@@ -152,6 +151,7 @@ export const availableChatsSlice = createSlice({
     },
 
     toggleSettings: (state) => {
+      console.log("hmm");
       state.settings_open = !state.settings_open;
     },
 

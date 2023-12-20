@@ -83,6 +83,87 @@ router.put("/modify", async (req, res) => {
   }
 });
 
+router.put("/changename", async (req, res) => {
+  const { finalName, user, chat_id } = req.body;
+
+  try {
+    if (!finalName || !user) throw new Error("Not enough input arguments");
+
+    const message = `User ${user} changed the chat name to ${finalName}`;
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({
+        content: message,
+        chat_id,
+      })
+      .select("id");
+
+    const message_id = data[0].id;
+    if (error) throw new Error("Could not insert a message");
+
+    const chat_update = await supabase
+      .from("chats")
+      .update({ name: finalName, last_message: message_id })
+      .eq("id", chat_id);
+
+    if (chat_update.error) throw new Error("Error updating chat");
+
+    return res
+      .status(200)
+      .json({ success: "Chat updated", message_id, message });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not update name" });
+  }
+});
+
+router.put("/changeimage", async (req, res) => {
+  const { finalImage, user, chat_id } = req.body;
+
+  try {
+    if (!user) throw new Error("Not enough input arguments");
+
+    const message = `User ${user} changed the chat image`;
+    const { data, error } = await supabase
+      .from("messages")
+      .insert({
+        content: message,
+        chat_id,
+      })
+      .select("id");
+
+    const message_id = data[0].id;
+    if (error) throw new Error("Could not insert a message");
+
+    const image_select = await supabase
+      .from("chats")
+      .select("image")
+      .eq("id", chat_id);
+
+    if (image_select.error) throw new Error("Could not swap image");
+
+    const img = image_select.data[0].image;
+
+    fileSaving.removeFile(COVER_IMAGES, img);
+
+    let path = null;
+    if (finalImage) {
+      path = await fileSaving.writeToFile(COVER_IMAGES, finalImage);
+    }
+    const chat_update = await supabase
+      .from("chats")
+      .update({ image: path, last_message: message_id })
+      .eq("id", chat_id);
+
+    if (chat_update.error) throw new Error("Error updating chat");
+
+    return res
+      .status(200)
+      .json({ success: "Chat updated", message_id, message });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not update name" });
+  }
+});
+
 router.get("/getchats", async (req, res) => {
   const search = req.query.search;
   console.log(PROFILE_IMAGES);

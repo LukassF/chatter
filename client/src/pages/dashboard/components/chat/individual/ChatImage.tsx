@@ -31,7 +31,13 @@ const ChatImage = ({
         selected ? "h-3/4 max-h-[50px]" : "w-[45px]"
       } aspect-square`}
     >
-      {item.image && <img src={item.image} alt="chat-image" />}
+      {item.image && (
+        <img
+          src={item.image}
+          alt="chat-image"
+          className="w-full h-full object-cover"
+        />
+      )}
       {!item.image && (
         <div
           className={`h-full w-full grid divide-x-[1px] divide-y-[1px] ${gridLayout()}`}

@@ -16,7 +16,11 @@ router.post("/send", async (req, res) => {
     let insert_object = { content: message, user_id, chat_id };
 
     if (image) {
-      const path = await fileSaving.writeToFile(MESSAGE_IMAGES, image);
+      const path = await fileSaving.writeToFile(
+        MESSAGE_IMAGES,
+        image,
+        "message"
+      );
       insert_object.image = path;
     }
 

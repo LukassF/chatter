@@ -49,6 +49,7 @@ export const fetchApi = (
       setData(data);
     } catch (err: any) {
       setError(err);
+      console.log(err);
       setData(null);
     } finally {
       setLoading(false);

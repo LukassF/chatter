@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { toggleSettings } from "../../../../store/features/availableChatsSlice";
 import ChatImage from "./individual/ChatImage";
@@ -10,7 +10,6 @@ const ChatBox: FC = () => {
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
   );
-  const current_user = useAppSelector((state) => state.current_user.user);
   const settings_open = useAppSelector(
     (state) => state.available_chats.settings_open
   );
@@ -38,8 +37,6 @@ const ChatBox: FC = () => {
       <article>
         <MessageLog />
       </article>
-      {/* <MessageLog />
-              <MessageInput /> */}
       <footer className="bg-white">
         <MessageInput />
       </footer>

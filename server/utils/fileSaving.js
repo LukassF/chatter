@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const fs = require("fs");
 
-const writeToFile = async (folder_name, base64) => {
+const writeToFile = async (folder_name, base64, type = null) => {
   const [preface, data] = base64.split(",");
   const extension = preface.split("/")[1].split(";")[0];
   const base64_data = Buffer.from(data, "base64");
@@ -16,12 +16,13 @@ const writeToFile = async (folder_name, base64) => {
     image_path = `${seed}.${extension}`;
   }
 
-  for (let file of files) {
-    const in_folder = fs.readFileSync(`${folder_name}\\${file}`);
-    if (Buffer.compare(in_folder, base64_data) === 0) {
-      return file;
+  if (type == "message")
+    for (let file of files) {
+      const in_folder = fs.readFileSync(`${folder_name}\\${file}`);
+      if (Buffer.compare(in_folder, base64_data) === 0) {
+        return file;
+      }
     }
-  }
 
   try {
     fs.writeFileSync(
@@ -52,8 +53,13 @@ const getBase64 = (folder_name, image) => {
   return "data:image/" + extension + ";base64," + base64;
 };
 
+const removeFile = (folder_name, image) => {
+  fs.unlinkSync(`${folder_name}\\${image}`);
+};
+
 module.exports = {
   writeToFile,
   scanDir,
   getBase64,
+  removeFile,
 };
