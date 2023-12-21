@@ -1,26 +1,131 @@
-import React from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Chat, ChatMember } from "../utils/types";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import {
   Settings,
   setCurrentSetting,
 } from "../store/features/availableChatsSlice";
+import { fetchApi } from "../utils/api/fetchApi";
+import { BACKEND_URL, WEBSOCKET_URL } from "../utils/api/constants";
+import Swal from "sweetalert2";
 
 const UsersList = ({ chat }: { chat: Chat | undefined }) => {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
+  const selected_chat = useAppSelector(
+    (state) => state.available_chats.selected_chat
+  );
+  const access_token = useAppSelector((state) => state.tokens.access_token);
+
+  const [user_to_remove, setUserToRemove] = useState<{
+    id: number;
+    name: string;
+  } | null>(null);
+  const [final_users, setFinalUsers] = useState<number[] | undefined>(
+    undefined
+  );
+
+  const [success, setSuccess] = useState<any>(null);
+  const [error, setError] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const fetchData = fetchApi(setSuccess, setError, setLoading);
+
+  const removeUser = useCallback(
+    (user: ChatMember) => {
+      if (
+        !selected_chat ||
+        !selected_chat.users ||
+        selected_chat.users.length === 0
+      )
+        return;
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: `User ${user.username} will be removed`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "I'm sure!",
+      }).then((res) => {
+        if (!res.isConfirmed) return;
+
+        let result = { id: user.id!, name: user.username! };
+        let final = selected_chat
+          ?.users!.filter((user) => user.id != result.id)
+          .map((item) => item.id!);
+
+        setUserToRemove(result);
+        setFinalUsers(final);
+      });
+    },
+    [selected_chat]
+  );
+
+  useEffect(() => {
+    if (access_token && final_users && current_user)
+      fetchData({
+        url: BACKEND_URL + "api/chats/manageusers",
+        method: "PUT",
+        data: {
+          users: final_users,
+          removed: [user_to_remove],
+          user: current_user?.username,
+          chat_id: selected_chat?.id,
+        },
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      });
+  }, [access_token, current_user, final_users]);
+
+  useEffect(() => {
+    const ws = new WebSocket(WEBSOCKET_URL);
+
+    if (success) {
+      ws.onopen = () => {
+        ws.send(
+          JSON.stringify({
+            users: selected_chat?.users,
+            type: "chat",
+          })
+        );
+
+        console.log(success);
+        success.data.messages &&
+          success.data.messages.forEach(
+            (mess: { id: number; message: string }) => {
+              ws.send(
+                JSON.stringify({
+                  id: mess.id,
+                  content: mess.message,
+                  chat_id: selected_chat?.id,
+                  image: null,
+                  created_at: new Date(),
+                  type: "message",
+                })
+              );
+            }
+          );
+
+        dispatch(setCurrentSetting(null));
+      };
+    }
+
+    return () => ws.close();
+  }, [success]);
 
   return (
-    <div className="pb-2 border-y-[1.5px]">
+    <div className="pb-2">
       <ul className="w-full flex flex-col items-stretch p-2 gap-1">
         {chat &&
           chat.users!.map((user: ChatMember, index: number) => (
             <li
               key={index}
-              className="rounded-md cursor-default hover:bg-stone-100 grid grid-cols-[1fr_3fr_1fr] min-h-[20px]"
+              className="rounded-md cursor-default hover:bg-stone-100 grid grid-cols-[1fr_2.8fr_0.8fr] min-h-[20px]"
             >
               <div className="p-[5px]">
-                <div className="w-full aspect-square rounded-full min-w-[35px] ">
+                <div className="aspect-square rounded-full w-[35px] ">
                   <img
                     className="w-full h-full object-cover"
                     src={
@@ -38,7 +143,10 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
               </div>
               <div className="flex justify-center items-center">
                 {chat.users?.length! > 2 && user.id != current_user?.id && (
-                  <button className="flex justify-center items-center w-2/3 aspect-square rounded-full hover:bg-stone-200">
+                  <button
+                    onClick={() => removeUser(user)}
+                    className="flex justify-center items-center w-2/3 aspect-square rounded-full hover:bg-stone-200"
+                  >
                     <i className="fa fa-close"></i>
                   </button>
                 )}

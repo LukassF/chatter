@@ -2,14 +2,22 @@ import { useDeferredValue, useEffect, useState } from "react";
 import { fetchApi } from "../utils/api/fetchApi";
 import { BACKEND_URL } from "../utils/api/constants";
 import { useAppSelector } from "../store/store";
+import { User } from "../store/features/currentUserSlice";
+import { ChatMember } from "../utils/types";
+import { RotatingLines } from "react-loader-spinner";
 
 const FoundUsersList = ({
   input,
   setUsers,
+  users,
 }: {
   input?: string;
   setUsers: any;
+  users: ChatMember[];
 }) => {
+  const selected_chat = useAppSelector(
+    (state) => state.available_chats.selected_chat
+  );
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const deferredInput = useDeferredValue(input || "");
   const [data, setData] = useState<any>(null);
@@ -32,46 +40,64 @@ const FoundUsersList = ({
     setUsers((prev: any) =>
       !prev.find((user: any) => user.id === item.id)
         ? [...prev, item]
-        : [...prev]
+        : [...prev.filter((val: User) => val.id !== item.id)]
     );
   };
 
-  //   useEffect(() => {
-  //     console.log(data);
-  //   }, [data]);
-
   return (
-    <div>
-      {data
-        ? data.data.map((item: any, index: number) => (
+    <div className="grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr] h-full w-full gap-1 py-2">
+      {loading ? (
+        <div className="w-full flex justify-center mt-3">
+          <RotatingLines
+            strokeColor="grey"
+            strokeWidth="5"
+            animationDuration="0.75"
+            width="40"
+            visible={true}
+          />
+        </div>
+      ) : data ? (
+        data.data
+          .filter(
+            (val: ChatMember) =>
+              !selected_chat?.users?.find((user) => user.id == val.id)
+          )
+          .map((item: any, index: number) => (
             <div
-              style={{ margin: 20, backgroundColor: "rgb(230,200,230)" }}
+              className="cursor-pointer hover:bg-stone-100 rounded-md flex p-2 items-center justify-start gap-2"
               key={index}
               onClick={() => addUser(item)}
             >
-              <div
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  position: "relative",
-                }}
-              >
+              <div className="h-full aspect-square rounded-full">
                 <img
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  className="h-full w-full object-cover"
                   src={
                     item.image
                       ? item.image
-                      : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
+                      : "https://img.freepik.com/premium-photo/natural-marble-pattern-background_1258-22160.jpg"
                   }
-                  alt=""
+                  alt="profile-images"
                 />
               </div>
-              {item.username}
+              <span className="font-medium text-md">{item.username}</span>
+
+              <input
+                type="radio"
+                className="ms-auto cursor-pointer"
+                checked={
+                  !!users
+                    .concat(selected_chat?.users!)
+                    .find((val) => val.id == item.id)
+                }
+                onChange={() => {}}
+              />
             </div>
           ))
-        : "No users"}
+      ) : (
+        <div className="self-center w-full text-center text-sm text-muted">
+          No users found
+        </div>
+      )}
     </div>
   );
 };

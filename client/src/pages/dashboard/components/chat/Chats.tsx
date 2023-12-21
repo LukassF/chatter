@@ -72,12 +72,14 @@ const Chats = ({ search }: { search: string | null }) => {
     const ws = new WebSocket(WEBSOCKET_URL);
     ws.onmessage = (msg) => {
       const message = typeof msg.data == "string" && JSON.parse(msg.data);
+
       if (
         message.type === "chat" &&
         message.users.find((val: User) => val.id === current_user?.id)
       )
         dispatch(triggerChatReload());
       else if (message.type == "message") {
+        console.log(message);
         dispatch(addMessage(message));
 
         dispatch(

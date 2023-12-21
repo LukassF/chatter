@@ -8,6 +8,82 @@ const fileSaving = require("../../../utils/fileSaving");
 const COVER_IMAGES = __dirname + "\\cover_images";
 const PROFILE_IMAGES = path.resolve("routes/api/users", "profile_images");
 
+router.put("/manageusers", async (req, res) => {
+  const { users, added = [], removed = [], user, chat_id } = req.body;
+
+  users.sort((a, b) => Number(a) - Number(b));
+
+  try {
+    let update_object = {};
+
+    const chat_select = await supabase
+      .from("chats")
+      .select("user_ids,have_seen")
+      .eq("id", chat_id);
+
+    if (chat_select.error) throw new Error("Error querying chat");
+    const { user_ids, have_seen } = chat_select.data[0];
+
+    //restoring the previous has seen values
+    if (have_seen && have_seen.length > 0) {
+      let new_have_seen = Array(users.length).fill(null);
+
+      users.length > 0 &&
+        users.forEach((user, i) => {
+          let index = user_ids.indexOf(Number(user));
+
+          if (index >= 0) new_have_seen[i] = have_seen[index];
+        });
+
+      update_object.have_seen = new_have_seen;
+    }
+
+    update_object.updated_at = new Date();
+
+    let all_messages = [
+      ...added.map((val) => ({
+        chat_id,
+        content: `User ${val.name} has been added by ${user}`,
+      })),
+      ...removed.map((val) => ({
+        chat_id,
+        content: `User ${val.name} has been removed by ${user}`,
+      })),
+    ];
+    all_messages = all_messages.filter((item) => item);
+
+    const { data, error } = await supabase
+      .from("messages")
+      .insert(all_messages)
+      .select("id");
+
+    if (error) throw new Error("Could not send assosciated messages");
+
+    if (data.length > 0) update_object.last_message = data[data.length - 1].id;
+    all_messages = all_messages.map((val, idx) => ({
+      id: data[idx].id,
+      message: val.content,
+    }));
+
+    if (users.length > 0) update_object.user_ids = users;
+
+    const chat_update = await supabase
+      .from("chats")
+      .update(update_object)
+      .eq("id", chat_id);
+
+    if (chat_update.error) throw new Error("Could not update chat");
+
+    return res
+      .status(200)
+      .json({ success: "Update successful", messages: all_messages });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ error: "Could not update users", content: err });
+  }
+});
+
 router.put("/modify", async (req, res) => {
   const {
     chat_id,
@@ -103,7 +179,11 @@ router.put("/changename", async (req, res) => {
 
     const chat_update = await supabase
       .from("chats")
-      .update({ name: finalName, last_message: message_id })
+      .update({
+        name: finalName,
+        last_message: message_id,
+        updated_at: new Date(),
+      })
       .eq("id", chat_id);
 
     if (chat_update.error) throw new Error("Error updating chat");
@@ -151,7 +231,7 @@ router.put("/changeimage", async (req, res) => {
     }
     const chat_update = await supabase
       .from("chats")
-      .update({ image: path, last_message: message_id })
+      .update({ image: path, last_message: message_id, updated_at: new Date() })
       .eq("id", chat_id);
 
     if (chat_update.error) throw new Error("Error updating chat");
