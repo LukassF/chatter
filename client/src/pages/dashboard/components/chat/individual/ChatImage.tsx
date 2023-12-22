@@ -18,11 +18,9 @@ const ChatImage = ({
       (item) => item.id != current_user?.id
     ).length;
 
-    if (!num_users) return;
-
-    if (num_users == 1) return "";
+    if (!num_users || num_users < 2) return "";
     else if (num_users == 2) return "grid-cols-2";
-    else if (num_users >= 3) return "grid-cols-2 grid-rows-2";
+    else if (num_users >= 3) return "grid-cols-[1fr_1fr] grid-rows-[1fr_1fr]";
   }, [item, current_user]);
 
   return (
@@ -42,9 +40,9 @@ const ChatImage = ({
         <div
           className={`h-full w-full grid divide-x-[1px] divide-y-[1px] ${gridLayout()}`}
         >
-          {item.users
-            ?.filter((item) => item.id != current_user?.id)
-            .map((user, index) => (
+          {item.users!.slice(0, 5).map((user, index) => {
+            if (item.users?.length! > 1 && user.id === current_user?.id) return;
+            return (
               <img
                 key={index}
                 src={
@@ -54,13 +52,14 @@ const ChatImage = ({
                 }
                 alt="profile-image"
                 className={`w-full h-full object-cover ${
-                  index == 2 &&
+                  index == 3 &&
                   item.users?.filter((item) => item.id != current_user?.id)
                     .length == 3 &&
                   "col-span-2"
                 }`}
               />
-            ))}
+            );
+          })}
         </div>
       )}
     </div>

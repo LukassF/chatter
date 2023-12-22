@@ -15,6 +15,10 @@ import Aside from "./components/other/Aside";
 import AvailableChatsSkeleton from "./components/chat/loaders/AvailableChatsSkeleton";
 import ChatBox from "./components/chat/ChatBox";
 import NoChatSelected from "./components/chat/loaders/NoChatSelected";
+import {
+  Settings,
+  setCurrentSetting,
+} from "../../store/features/availableChatsSlice";
 
 const Dashboard: FC = () => {
   const dispatch = useAppDispatch();
@@ -84,20 +88,31 @@ const Dashboard: FC = () => {
   }, [success]);
 
   return (
-    <main className="grid grid-cols-[1fr_16fr] divide-x-2 overflow-hidden h-screen">
+    <main
+      className={`grid ${
+        selected_chat ? "grid-cols-[1fr]" : "grid-cols-[1fr_16fr]"
+      } sm:grid-cols-[1fr_16fr] divide-x-2 overflow-hidden h-screen`}
+    >
       <Aside />
       <section
-        className={`grid grid-cols-[1fr_1.8fr] ${
+        className={`grid grid-cols-[1fr] sm:grid-cols-[1fr_1.8fr] ${
           settings_open
             ? "lg:grid-cols-[1.1fr_2fr_1fr]"
             : "lg:grid-cols-[1.1fr_3fr]"
-        } divide-x-2`}
+        } sm:divide-x-2`}
       >
-        <article className=" py-3 grid grid-rows-[minmax(0,1fr)_minmax(0,4fr)] gap-2 h-screen">
-          <div className="flex flex-col gap-2 justify-evenly">
+        <article
+          className={`py-3 sm:grid grid-rows-[1fr_6fr] sm:grid-rows-[1fr_4fr] gap-2 h-screen ${
+            selected_chat ? "hidden" : "grid"
+          }`}
+        >
+          <div className="flex flex-col gap-2 justify-evenly min-h-[100px]">
             <div className="flex justify-between items-center px-4">
-              <h1 className="text-2xl font-bold">Chats</h1>
-              <button className=" p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-sm flex justify-center items-center opacity-70">
+              <h1 className="text-xl sm:text-2xl font-bold">Chats</h1>
+              <button
+                onClick={() => dispatch(setCurrentSetting(Settings.create))}
+                className="p-[8px] sm:p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-xs sm:text-sm flex justify-center items-center opacity-70"
+              >
                 <i className="fa fa-add"></i>
               </button>
             </div>
@@ -107,58 +122,24 @@ const Dashboard: FC = () => {
                 onChange={(e) => setChatSearch(e.target.value)}
                 type="text"
                 placeholder="&#xf002; Search"
-                className="form-control py-2 rounded-full text-sm"
+                className="form-control py-2 rounded-full text-xs sm:text-sm"
                 style={{
                   fontFamily: "'Helvetica', FontAwesome, sans-serif",
                   fontStyle: "normal",
                 }}
               />
             </div>
-
-            {/* <hr className="mx-3"></hr> */}
           </div>
 
           {current_user && <Chats search={chatsearch} />}
         </article>
         <article>{selected_chat ? <ChatBox /> : <NoChatSelected />}</article>
-        <article className="max-h-screen overflow-hidden">
+        <article
+          className={`min-w-[300px] lg:min-w-[auto] h-screen z-10 lg:max-h-screen overflow-hidden lg:relative sm:absolute relative bg-white right-0 top-0 transition-transform ${
+            settings_open ? "sm:translate-x-0" : "hidden sm:translate-x-full"
+          }`}
+        >
           {settings_open && <ChatSettings />}
-          {/* {current_user?.id && (
-            <div>
-              {current_user?.username}
-              <div
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "50%",
-                  overflow: "hidden",
-                  position: "relative",
-                }}
-              >
-                <img
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  src={
-                    current_user.image
-                      ? current_user.image
-                      : "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png"
-                  }
-                  alt=""
-                />
-              </div>
-            </div>
-          )}
-          <hr></hr>
-          {current_user && <CreateChat />}
-          {selected_chat && (
-            <div style={{ display: "flex" }}>
-              <div>
-                <MessageLog />
-                <MessageInput />
-              </div>
-              {settings_open && <ChatSettings />}
-            </div>
-          )}
-          {current_user && <Chats />} */}
         </article>
       </section>
     </main>

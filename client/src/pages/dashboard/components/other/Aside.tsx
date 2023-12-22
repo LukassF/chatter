@@ -9,6 +9,9 @@ const Aside = () => {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const refresh_token = useAppSelector((state) => state.tokens.refresh_token);
+  const selected_chat = useAppSelector(
+    (state) => state.available_chats.selected_chat
+  );
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -30,8 +33,12 @@ const Aside = () => {
     window.location.reload();
   }, []);
   return (
-    <aside className="py-3 px-2 flex flex-col justify-between">
-      <ul className="list-style-none flex flex-col items-stretch justify-stretch gap-1  [&>*]:flex [&>*]:justify-center [&>*]:items-center [&>*]:p-3 [&>*]:text-xl [&>*]:cursor-pointer [&>*]:rounded-md [&>*]:h-14 [&>*]:text-stone-500 [&>*]:font-light">
+    <aside
+      className={`py-3 px-2 sm:flex flex-col justify-between min-w-[70px] h-screen overflow-y-auto ${
+        selected_chat ? "hidden" : "flex"
+      }`}
+    >
+      <ul className="min-h-[200px] list-style-none flex flex-col items-stretch justify-stretch gap-1  [&>*]:flex [&>*]:justify-center [&>*]:items-center [&>*]:p-1 [&>*]:text-md [&>*]:cursor-pointer [&>*]:rounded-md [&>*]:h-10 [&>*]:text-stone-500 [&>*]:font-light">
         <li className="hover:bg-gray-100">
           <i className="far fa-message"></i>
         </li>
@@ -46,7 +53,7 @@ const Aside = () => {
         </li>
       </ul>
 
-      <div className="flex flex-col items-stretch justify-center gap-2">
+      <div className="flex flex-col items-stretch justify-center gap-2 min-h-[100px]">
         {current_user && (
           <Link to="/profile" className="flex justify-center items-center">
             <div className="max-w-[40px] relative rounded-full aspect-square overflow-hidden cursor-pointer hover:shadow-md">
@@ -64,7 +71,7 @@ const Aside = () => {
         )}
         <button
           onClick={logout}
-          className="hover:bg-gray-100 flex justify-center items-center p-3 text-xl cursor-pointer rounded-md h-14 text-stone-500 font-light"
+          className="hover:bg-gray-100 flex justify-center items-center p-1 text-md cursor-pointer rounded-md h-10 text-stone-500 font-light"
         >
           <i className="fa fa-sign-out"></i>
         </button>

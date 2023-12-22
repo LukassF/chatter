@@ -10,10 +10,12 @@ const FoundUsersList = ({
   input,
   setUsers,
   users,
+  type,
 }: {
   input?: string;
   setUsers: any;
   users: ChatMember[];
+  type: string;
 }) => {
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
@@ -45,7 +47,7 @@ const FoundUsersList = ({
   };
 
   return (
-    <div className="grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr] h-full w-full gap-1 py-2">
+    <div className="grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr] h-full w-full gap-1 py-1">
       {loading ? (
         <div className="w-full flex justify-center mt-3">
           <RotatingLines
@@ -58,9 +60,10 @@ const FoundUsersList = ({
         </div>
       ) : data ? (
         data.data
-          .filter(
-            (val: ChatMember) =>
-              !selected_chat?.users?.find((user) => user.id == val.id)
+          .filter((val: ChatMember) =>
+            selected_chat && type === "modify"
+              ? !selected_chat?.users?.find((user) => user.id == val.id)
+              : val
           )
           .map((item: any, index: number) => (
             <div
@@ -68,7 +71,7 @@ const FoundUsersList = ({
               key={index}
               onClick={() => addUser(item)}
             >
-              <div className="h-full aspect-square rounded-full">
+              <div className="max-h-[30px] h-full aspect-square rounded-full">
                 <img
                   className="h-full w-full object-cover"
                   src={
@@ -85,9 +88,11 @@ const FoundUsersList = ({
                 type="radio"
                 className="ms-auto cursor-pointer"
                 checked={
-                  !!users
-                    .concat(selected_chat?.users!)
-                    .find((val) => val.id == item.id)
+                  type === "modify"
+                    ? !!users
+                        .concat(selected_chat?.users!)
+                        .find((val) => val.id == item.id)
+                    : !!users.find((val) => val.id == item.id)
                 }
                 onChange={() => {}}
               />

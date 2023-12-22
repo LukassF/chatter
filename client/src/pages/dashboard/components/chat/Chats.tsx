@@ -4,6 +4,7 @@ import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
   addChats,
+  addManyMessages,
   addMessage,
   pushToTop,
   setChats,
@@ -16,7 +17,7 @@ import {
 import { User } from "../../../../store/features/currentUserSlice";
 import ChatCard from "./individual/ChatCard";
 import AvailableChatsSkeleton from "./loaders/AvailableChatsSkeleton";
-import { Chat } from "../../../../utils/types";
+import { Chat, Message } from "../../../../utils/types";
 
 const Chats = ({ search }: { search: string | null }) => {
   const dispatch = useAppDispatch();
@@ -70,28 +71,36 @@ const Chats = ({ search }: { search: string | null }) => {
 
   useEffect(() => {
     const ws = new WebSocket(WEBSOCKET_URL);
+
     ws.onmessage = (msg) => {
       const message = typeof msg.data == "string" && JSON.parse(msg.data);
-
       if (
         message.type === "chat" &&
         message.users.find((val: User) => val.id === current_user?.id)
       )
         dispatch(triggerChatReload());
-      else if (message.type == "message") {
+      else if (message.type === "message") {
         console.log(message);
-        dispatch(addMessage(message));
+        let mess = message;
+        if (message.messages) {
+          mess = message.messages[message.messages.length - 1];
+          message.messages.forEach((item: Message) =>
+            dispatch(addMessage(item))
+          );
+        } else dispatch(addMessage(message));
+
+        console.log(mess);
 
         dispatch(
           setLastMessage({
-            chat_id: message.chat_id,
-            user_id: message.user_id,
-            content: message.content,
-            id: message.id,
-            created_at: message.created_at,
+            chat_id: mess.chat_id,
+            user_id: mess.user_id,
+            content: mess.content,
+            id: mess.id,
+            created_at: mess.created_at,
           })
         );
-        dispatch(pushToTop(message.chat_id));
+        dispatch(pushToTop(mess.chat_id));
       } else if (message.type == "hasseen") {
         dispatch(
           setUserHasSeen({

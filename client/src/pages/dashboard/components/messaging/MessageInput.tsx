@@ -105,7 +105,7 @@ const MessageInput = () => {
   return (
     <>
       {base64 && (
-        <div className="bg-stone-100 rounded-lg mx-3 h-28 w-1/2 absolute bottom-16 z-0 flex justify-start items-center p-[8px]">
+        <div className="bg-stone-100 rounded-lg mx-3 h-20 md:h-28 w-3/4 md:w-1/2 absolute bottom-16 z-0 flex justify-start items-center p-[8px]">
           <div className="h-full relative p-[8px]">
             <div className="h-full aspect-square rounded-md overflow-hidden">
               <img
@@ -126,17 +126,18 @@ const MessageInput = () => {
           </div>
         </div>
       )}
+
       <form
         onSubmit={sendMessage}
         autoComplete="off"
-        className={`h-full z-2 relative grid ${
+        className={`h-full z-2 relative grid grid-cols-[8fr_1fr_1fr] md:grid-cols-[10fr_1fr_1fr] ${
           settings_open
-            ? "grid-cols-[13fr_1fr_1fr]"
-            : "grid-cols-[18fr_1fr_1fr]"
+            ? "lg:grid-cols-[13fr_1fr_1fr]"
+            : "lg:grid-cols-[18fr_1fr_1fr]"
         } gap-2 px-2 py-1 justify-center items-center`}
       >
         <input
-          className="rounded-full h-3/4 px-3 border-2 border-stone-200 bg-stone-100 outline-none"
+          className="text-xs sm:text-md rounded-full h-3/4 px-3 border-2 border-stone-200 bg-stone-100 outline-none"
           type="text"
           placeholder="Your message"
           name="message"
@@ -152,13 +153,13 @@ const MessageInput = () => {
         ></input>
         <button
           type="button"
-          className="hover:bg-gray-100 h-3/4 text-blue-600 max-h-[45px] rounded-full aspect-square"
+          className="hover:bg-gray-100 h-3/4 text-blue-600 max-h-[45px] rounded-full aspect-square flex justify-center items-center"
           onClick={() => fileRef.current?.click()}
         >
           <i className="fa fa-image"></i>
         </button>
         {/* EMOJI PICKER */}
-        <button className="hover:bg-gray-100 text-blue-600 h-3/4 max-h-[45px] rounded-full aspect-square">
+        <button className="hover:bg-gray-100 text-blue-600 h-3/4 max-h-[45px] rounded-full aspect-square flex justify-center items-center">
           <i className="fa fa-paper-plane"></i>
         </button>
       </form>

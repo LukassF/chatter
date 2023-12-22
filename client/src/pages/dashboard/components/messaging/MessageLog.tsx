@@ -172,7 +172,11 @@ const MessageLog = () => {
         ) : error ? (
           <div>Timeout error occured, please try again</div>
         ) : (
-          !loading && <p>No messages yet</p>
+          !loading && (
+            <p className="text-center w-full text-md p-3 text-muted">
+              No messages yet
+            </p>
+          )
         )}
       </div>
       <div ref={messageEndRef}></div>

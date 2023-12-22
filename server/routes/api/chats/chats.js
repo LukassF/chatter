@@ -13,6 +13,8 @@ router.put("/manageusers", async (req, res) => {
 
   users.sort((a, b) => Number(a) - Number(b));
 
+  console.log(users, added, removed, user, chat_id);
+
   try {
     let update_object = {};
 
@@ -47,7 +49,10 @@ router.put("/manageusers", async (req, res) => {
       })),
       ...removed.map((val) => ({
         chat_id,
-        content: `User ${val.name} has been removed by ${user}`,
+        content:
+          val.name == user
+            ? `User ${user} has left the chat`
+            : `User ${val.name} has been removed by ${user}`,
       })),
     ];
     all_messages = all_messages.filter((item) => item);
@@ -270,7 +275,8 @@ router.get("/getchats", async (req, res) => {
 });
 
 router.post("/createchat", async (req, res) => {
-  const { name, users, base64 } = req.body;
+  const { name, users } = req.body;
+  console.log(name, users);
 
   users.sort((a, b) => Number(a) - Number(b));
 
@@ -278,12 +284,7 @@ router.post("/createchat", async (req, res) => {
     if (!name || !users || users.length < 2)
       throw new Error("Insufficient paramters");
 
-    let create_object = { name, user_ids: users, image: null };
-
-    if (base64) {
-      const path = await fileSaving.writeToFile(COVER_IMAGES, base64);
-      create_object.image = path;
-    }
+    let create_object = { name, user_ids: users };
 
     const have_seen = Array(users.length).fill(null);
     create_object.have_seen = have_seen;

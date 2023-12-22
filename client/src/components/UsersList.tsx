@@ -91,7 +91,6 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
           })
         );
 
-        console.log(success);
         success.data.messages &&
           success.data.messages.forEach(
             (mess: { id: number; message: string }) => {
@@ -122,9 +121,9 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
           chat.users!.map((user: ChatMember, index: number) => (
             <li
               key={index}
-              className="rounded-md cursor-default hover:bg-stone-100 grid grid-cols-[1fr_2.8fr_0.8fr] min-h-[20px]"
+              className="rounded-md cursor-default hover:bg-stone-100 grid grid-cols-[1fr_3fr_1fr] xs:grid-cols-[1fr_6fr_1fr] sm:grid-cols-[1fr_2.8fr_0.8fr] min-h-[20px]"
             >
-              <div className="p-[5px]">
+              <div className="p-[5px] min-w-[50px]">
                 <div className="aspect-square rounded-full w-[35px] ">
                   <img
                     className="w-full h-full object-cover"
@@ -138,8 +137,12 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
                 </div>
               </div>
               <div className=" flex flex-col items-start justify-center p-[5px]">
-                <h3 className="font-medium text-md">{user.username}</h3>
-                <p className="font-light text-xs text-muted">{user.email}</p>
+                <h3 className="font-medium text-md truncate w-full">
+                  {user.username}
+                </h3>
+                <p className="font-light text-xs text-muted truncate w-full">
+                  {user.email}
+                </p>
               </div>
               <div className="flex justify-center items-center">
                 {chat.users?.length! > 2 && user.id != current_user?.id && (
@@ -147,7 +150,7 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
                     onClick={() => removeUser(user)}
                     className="flex justify-center items-center w-2/3 aspect-square rounded-full hover:bg-stone-200"
                   >
-                    <i className="fa fa-close"></i>
+                    <i className="fa fa-close text-xs"></i>
                   </button>
                 )}
               </div>

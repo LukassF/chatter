@@ -97,7 +97,7 @@ const ImageChange = () => {
   }, [success]);
 
   return (
-    <div className="w-[500px] aspect-[5/2] bg-white rounded-xl p-3 gap-2 grid grid-cols-[1fr_2fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">
+    <div className="max-w-screen min-h-[200px] sm:w-[500px] text-sm sm:text-md sm:aspect-[5/2] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-3 gap-2 grid xs:grid-cols-[1fr_2fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">
       <button
         onClick={() => closeSetting()}
         className="w-[30px] aspect-square rounded-full bg-blue-100 hover:bg-blue-200 text-blue-500 flex justify-center items-center absolute right-3 top-3"
@@ -106,7 +106,7 @@ const ImageChange = () => {
       </button>
 
       <div className=" flex justify-center items-center p-1">
-        <div className="w-full aspect-square rounded-full overflow-hidden">
+        <div className="max-w-[150px] w-full aspect-square rounded-full overflow-hidden">
           <img
             className="w-full h-full object-cover"
             src={
@@ -142,13 +142,13 @@ const ImageChange = () => {
           <div className="grid grid-cols-2 p-[13px] gap-4">
             <button
               disabled={image === selected_chat?.image}
-              className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
+              className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100 py-2"
             >
               Accept
             </button>
             <button
               type="button"
-              className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200"
+              className="py-2 rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200"
               onClick={() => closeSetting()}
             >
               Cancel

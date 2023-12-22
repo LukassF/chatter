@@ -1,6 +1,10 @@
 import { FC } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
-import { toggleSettings } from "../../../../store/features/availableChatsSlice";
+import {
+  setMessages,
+  setSelectedChat,
+  toggleSettings,
+} from "../../../../store/features/availableChatsSlice";
 import ChatImage from "./individual/ChatImage";
 import MessageInput from "../messaging/MessageInput";
 import MessageLog from "../messaging/MessageLog";
@@ -15,9 +19,18 @@ const ChatBox: FC = () => {
   );
 
   return (
-    <section className="w-full h-screen grid grid-rows-[minmax(0,1fr)_minmax(0,8fr)_minmax(0,1fr)] relative">
-      <header className="flex bg-white justify-between items-center px-2 shadow-sm relative">
+    <section className="w-full h-screen grid grid-rows-[1fr_10fr_1fr] xs:grid-rows-[1fr_8fr_1fr] relative">
+      <header className="flex bg-white justify-between items-center px-2 shadow-sm relative min-h-[60px]">
         <div className="flex items-center gap-2 h-full relative">
+          <button
+            onClick={() => {
+              dispatch(setSelectedChat(undefined));
+              dispatch(setMessages([]));
+            }}
+            className="hover:bg-stone-100 sm:hidden w-[40px] aspect-square flex justify-center items-center rounded-full"
+          >
+            <i className="fa fa-arrow-left"></i>
+          </button>
           <ChatImage item={selected_chat!} selected={true} />
           <h4 className="m-0 p-0">{selected_chat?.name}</h4>
         </div>
@@ -37,7 +50,7 @@ const ChatBox: FC = () => {
       <article>
         <MessageLog />
       </article>
-      <footer className="bg-white">
+      <footer className="bg-white min-h-[60px]">
         <MessageInput />
       </footer>
     </section>

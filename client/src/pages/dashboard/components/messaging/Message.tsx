@@ -84,7 +84,7 @@ const IndividualMessage = ({
     <>
       {/* Delta time dividor for far apart messages */}
       {deltaTimePrev > 10 && (
-        <div className="self-center text-xs text-stone-500 my-3">
+        <div className="self-center text-[11px] sm:text-xs text-stone-500 my-3">
           {new Date(item.created_at).toDateString().slice(0, -4)}
           {" - "}
           {new Date(item.created_at).getHours()}:
@@ -95,8 +95,8 @@ const IndividualMessage = ({
       {!isMine(item) &&
         item.user_id &&
         (!prev || prev?.user_id != item.user_id || deltaTimePrev > 10) && (
-          <div className="text-[12px] text-stone-400 ml-14">
-            {determineUser?.username}
+          <div className=" text-[10px] xs:text-[12px] text-stone-400 ml-14">
+            {determineUser?.username || "Chatter user"}
           </div>
         )}
 
@@ -107,7 +107,6 @@ const IndividualMessage = ({
               ? "flex-end"
               : "flex-start"
             : "center",
-          fontSize: !item.user_id ? "10px" : "15px",
           color: !item.user_id ? "grey" : "",
         }}
         className={`grid gap-2 items-end relative ${
@@ -116,6 +115,10 @@ const IndividualMessage = ({
             : item.user_id
             ? "pl-3 grid-cols-[minmax(0,27px)_minmax(0,10fr)]"
             : ""
+        } ${
+          !item.user_id
+            ? "text-[8px] sm:text-[10px]"
+            : "text-[12px] sm:text-[15px]"
         } max-w-[55%]`}
       >
         {!isMine(item) && item.user_id && (
@@ -175,7 +178,7 @@ const IndividualMessage = ({
           )}
         </div>
       </div>
-      {chat_users.find((val) => val.has_seen === item.id) && (
+      {chat_users.find((val) => val.has_seen === item.id) && item.user_id && (
         <div
           className={`${
             isMine(item) ? "pr-5 self-end" : "pl-14 self-start"

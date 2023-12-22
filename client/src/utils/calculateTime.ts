@@ -22,7 +22,7 @@ export const calculateTime = (date_str: string): string => {
   const years = Math.floor(time / msecs_in_year);
   if (years > 0) return years + " year" + (years > 1 ? "s" : "");
   const months = Math.floor((time - years * msecs_in_year) / msecs_in_month);
-  if (months > 0) return months + " month" + (months > 1 ? "s" : "");
+  if (months > 0) return months + " mth" + (months > 1 ? "s" : "");
   const days = Math.floor(
     (time - years * msecs_in_year - months * msecs_in_month) / msecs_in_day
   );
@@ -34,7 +34,7 @@ export const calculateTime = (date_str: string): string => {
       days * msecs_in_day) /
       msecs_in_hour
   );
-  if (hours > 0) return hours + " hour" + (hours > 1 ? "s" : "");
+  if (hours > 0) return hours + " hr" + (hours > 1 ? "s" : "");
   const minutes = Math.floor(
     (time -
       years * msecs_in_year -
@@ -43,7 +43,7 @@ export const calculateTime = (date_str: string): string => {
       hours * msecs_in_hour) /
       msecs_in_minute
   );
-  if (minutes > 0) return minutes + " minute" + (minutes > 1 ? "s" : "");
+  if (minutes > 0) return minutes + " mn" + (minutes > 1 ? "s" : "");
   const seconds = Math.floor(
     (time -
       years * msecs_in_year -
@@ -53,7 +53,7 @@ export const calculateTime = (date_str: string): string => {
       minutes * msecs_in_minute) /
       msecs_in_sec
   );
-  if (seconds > 0) return seconds + " second" + (seconds > 1 ? "s" : "");
+  if (seconds > 0) return seconds + " sec" + (seconds > 1 ? "s" : "");
 
   return "Just now";
 };

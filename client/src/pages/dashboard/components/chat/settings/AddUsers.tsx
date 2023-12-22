@@ -76,21 +76,22 @@ const AddUsers = () => {
           })
         );
 
-        success.data.messages &&
-          success.data.messages.forEach(
-            (mess: { id: number; message: string }) => {
-              ws.send(
-                JSON.stringify({
-                  id: mess.id,
-                  content: mess.message,
-                  chat_id: selected_chat?.id,
-                  image: null,
-                  created_at: new Date(),
-                  type: "message",
-                })
-              );
-            }
-          );
+        let messages = success.data.messages.map(
+          (mess: { id: number; message: string }) => ({
+            id: mess.id,
+            content: mess.message,
+            chat_id: selected_chat?.id,
+            image: null,
+            created_at: new Date(),
+          })
+        );
+
+        ws.send(
+          JSON.stringify({
+            messages,
+            type: "message",
+          })
+        );
 
         dispatch(setCurrentSetting(null));
       };
@@ -100,7 +101,7 @@ const AddUsers = () => {
   }, [success]);
 
   return (
-    <div className="w-[500px] h-screen bg-white rounded-xl p-3 gap-2 shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative my-14 top-14">
+    <div className="max-w-[95vw] w-[500px] sm:aspect-[4/5]  bg-white rounded-xl p-3 gap-2 shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative left-1/2 -translate-x-1/2">
       <button
         onClick={() => closeSetting()}
         className="w-[30px] aspect-square rounded-full bg-blue-100 hover:bg-blue-200 text-blue-500 flex justify-center items-center absolute right-3 top-3"
@@ -124,12 +125,12 @@ const AddUsers = () => {
             onChange={(e) => setInput(e.target.value)}
           />
         </div>
-        <div className=" max-w-full flex gap-1 p-2 overflow-x-auto">
+        <div className="w-full flex justify-start gap-1 p-2 overflow-x-auto">
           {selected_users && selected_users.length > 0 ? (
             selected_users.map((user, index) => (
               <div
                 key={index}
-                className="h-full w-[70px]  p-1 grid grid-rows-[1fr_0.7fr] items-center"
+                className="h-full  min-w-[70px]  p-1 flex flex-col justify-center "
               >
                 <div className="flex justify-center items-center w-full relative">
                   <button
@@ -138,7 +139,7 @@ const AddUsers = () => {
                   >
                     <i className="fa fa-close"></i>
                   </button>
-                  <div className="w-[75%] aspect-square  rounded-full overflow-hidden">
+                  <div className="w-[75%] max-w-[50px] aspect-square  rounded-full overflow-hidden">
                     <img
                       className="h-full w-full object-cover"
                       src={
@@ -150,7 +151,7 @@ const AddUsers = () => {
                     />
                   </div>
                 </div>
-                <div className="truncate text-xs text-muted font-light text-center">
+                <div className=" py-1  truncate text-xs text-muted font-light text-center">
                   {user.username}
                 </div>
               </div>
@@ -166,10 +167,11 @@ const AddUsers = () => {
             input={input}
             setUsers={setSelectedUsers}
             users={selected_users}
+            type="modify"
           />
         </div>
 
-        <div className="grid grid-cols-2 p-[8px] gap-4">
+        <div className="grid grid-cols-2 p-[8px] sm:gap-4 gap-2">
           <button
             onClick={() => commitData()}
             disabled={selected_users.length === 0}

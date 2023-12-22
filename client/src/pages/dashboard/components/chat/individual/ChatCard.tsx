@@ -36,7 +36,7 @@ const ChatCard = ({ item }: { item: Chat }) => {
       <ChatImage item={item} />
       <div className=" p-[7px] grid grid-rows-[1fr_1.1fr]">
         <h4
-          className="m-0 p-0 text-[17px]"
+          className="m-0 p-0 text-[14px] sm:text-[17px]"
           style={{ fontWeight: hasNotSeen() ? 600 : 400 }}
         >
           {item.name}
@@ -44,7 +44,7 @@ const ChatCard = ({ item }: { item: Chat }) => {
 
         <div className="flex items-center truncate max-w-[100%] overflow-hidden">
           <span
-            className="text-sm text-stone-500 overflow-hidden truncate  max-w-[60%]"
+            className="text-[10px] sm:text-sm text-stone-500 overflow-hidden truncate  max-w-[60%]"
             style={{
               fontWeight: hasNotSeen() ? 700 : 300,
               color: hasNotSeen() ? "black" : "rgb(120 ,113 ,108)",
@@ -62,7 +62,7 @@ const ChatCard = ({ item }: { item: Chat }) => {
             </span>
             <span>{item.message ? item.message : "Image sent"} </span>
           </span>
-          <span className="text-sm text-stone-500 font-light flex items-center">
+          <span className="text-[10px] sm:text-sm text-stone-500 font-light flex items-center">
             <div className="w-[2.5px] aspect-square rounded-full bg-stone-400 mx-1"></div>
             {calculateTime(item.message_created_at)}
           </span>

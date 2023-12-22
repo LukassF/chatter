@@ -5,6 +5,7 @@ export enum Settings {
   name = "name",
   image = "image",
   users = "users",
+  create = "create",
 }
 
 interface ChatState {
@@ -100,6 +101,7 @@ export const availableChatsSlice = createSlice({
     },
 
     addManyMessages: (state, action: PayloadAction<Message[]>) => {
+      console.log(action.payload);
       let messages;
       if (state.selected_chat)
         messages = action.payload
