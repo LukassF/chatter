@@ -144,7 +144,7 @@ const ChatSettings = () => {
             </div>
           </div>
           <h2 className="text-lg font-semibold text-center mt-2">
-            {selected_chat?.name} settings
+            Chat settings
           </h2>
 
           <div className="flex flex-col gap-1 items-stretch [&>*]:text-left  [&>*]:rounded-md ">

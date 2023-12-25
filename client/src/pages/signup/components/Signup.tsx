@@ -11,6 +11,7 @@ import { decodeToken } from "../../../utils/decodeToken";
 import { fetchUser } from "../../../store/features/currentUserSlice";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { RotatingLines } from "react-loader-spinner";
 
 const Signup: FC = () => {
   const dispatch = useAppDispatch();
@@ -19,10 +20,12 @@ const Signup: FC = () => {
   const [email, setEmail] = useState<string | null>();
   const [password, setPassword] = useState<string | null>();
 
+  const [type, setType] = useState<boolean>(false);
+
   const [form, setForm] = useState<SignupData>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
   const [usernameError, setUsernameError] = useState<string | null>();
   const [emailError, setEmailError] = useState<string | null>();
@@ -105,17 +108,17 @@ const Signup: FC = () => {
   }, [success]);
 
   return (
-    <section className="flex flex-col justify-center items-stretch w-full xs:w-[80%] ">
+    <section className="flex flex-col justify-center items-stretch w-full xs:w-[85%] ">
       <h3 className="text-center text-3xl font-bold mb-2">Sign up below</h3>
       <h6 className="mb-5 text-md font-light text-center">
         Join our amazing community!
       </h6>
       <form
         onSubmit={signUp}
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-1"
         autoComplete="off"
       >
-        <div className="form-group">
+        <div className="form-group p-1">
           <input
             type="text"
             placeholder="Username"
@@ -127,7 +130,7 @@ const Signup: FC = () => {
             <div className="invalid-feedback">{usernameError}</div>
           )}
         </div>
-        <div className="form-group">
+        <div className="form-group p-1">
           <input
             type="text"
             placeholder="Email"
@@ -140,9 +143,9 @@ const Signup: FC = () => {
           />
           {emailError && <div className="invalid-feedback">{emailError}</div>}
         </div>
-        <div className="form-group">
+        <div className="form-group relative p-1">
           <input
-            type="password"
+            type={type ? "text" : "password"}
             placeholder="Password"
             name="password"
             className={`form-control ${passwordError && "is-invalid"}`}
@@ -151,13 +154,37 @@ const Signup: FC = () => {
               setPasswordError(null);
             }}
           />
+          {!passwordError && (
+            <button
+              type="button"
+              onClick={() => setType((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-[30px] rounded-full  aspect-square hover:bg-stone-100 flex justify-center items-center"
+            >
+              <i className="fa fa-eye  text-muted"></i>
+            </button>
+          )}
+
           {passwordError && (
             <div className="invalid-feedback">{passwordError}</div>
           )}
         </div>
 
-        <button className="btn btn-primary">Sign Up</button>
-        <span className="text-[12px] xs:text-sm text-gray-500">
+        <button className="btn btn-primary m-1 min-h-[39px]">
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <RotatingLines
+                strokeColor="white"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="20"
+                visible={true}
+              />
+            </div>
+          ) : (
+            "Sign up"
+          )}
+        </button>
+        <span className="text-[12px] xs:text-sm text-gray-500 m-1">
           Or{" "}
           <Link to="/login">
             <em className="font-bold underline cursor-pointer hover:text-gray-700">

@@ -7,7 +7,7 @@ const LoginPage: FC = () => {
       className="w-screen h-screen bg-cover bg-left bg-no-repeat flex justify-end"
       style={{
         backgroundImage:
-          "url('https://festivals.currentnewstimes.com/wp-content/uploads/2020/07/Friends-enjoying-together-by-laying-on-grass.jpg')",
+          "url('https://thoughtcatalog.com/wp-content/uploads/2014/04/shutterstock_172218023.jpg')",
       }}
     >
       <div className=" bg-white w-screen sm:w-1/2 sm:min-w-[500px]  grid grid-rows-[15fr_1fr] overflow-auto p-4 sm:p-5">

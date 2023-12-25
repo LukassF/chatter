@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import { setSelectedChat } from "../../../../../store/features/availableChatsSlice";
 import { calculateTime } from "../../../../../utils/calculateTime";
@@ -28,6 +28,14 @@ const ChatCard = ({ item }: { item: Chat }) => {
     );
   }, [item]);
 
+  const alternateName = useMemo(() => {
+    const names = item.users
+      ?.filter((user) => user.id != current_user?.id)
+      .map((val) => val.username)
+      .join(", ");
+    return names;
+  }, [item]);
+
   return (
     <div
       onClick={() => dispatch(setSelectedChat(item))}
@@ -39,7 +47,7 @@ const ChatCard = ({ item }: { item: Chat }) => {
           className="m-0 p-0 text-[14px] sm:text-[17px]"
           style={{ fontWeight: hasNotSeen() ? 600 : 400 }}
         >
-          {item.name}
+          {item.name && item.name != '""' ? item.name : alternateName}
         </h4>
 
         <div className="flex items-center truncate max-w-[100%] overflow-hidden">

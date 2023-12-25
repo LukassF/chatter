@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { ChatMember, Message } from "../../../../utils/types";
-import { useAppSelector } from "../../../../store/store";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { setImage, toggleFS } from "../../../../store/features/messageSlice";
 
 const IndividualMessage = ({
   item,
@@ -13,6 +14,7 @@ const IndividualMessage = ({
   next: Message | null;
   chat_users: ChatMember[];
 }) => {
+  const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
 
   const deltaTimePrev = useMemo(() => {
@@ -148,7 +150,11 @@ const IndividualMessage = ({
         >
           {item.image && (
             <div
-              className={`h-[130px] w-[200px] relative mb-1  overflow-hidden rounded-lg`}
+              onClick={() => {
+                dispatch(toggleFS(true));
+                dispatch(setImage(item.image ? item.image : undefined));
+              }}
+              className=" w-[200px] aspect-[20/13] max-w-full relative mb-1  overflow-hidden rounded-lg group bg-white cursor-pointer "
             >
               <img
                 src={item.image}
@@ -158,6 +164,7 @@ const IndividualMessage = ({
                   height: "100%",
                   objectFit: "cover",
                 }}
+                className="group-hover:scale-105 transition-all"
               />
             </div>
           )}

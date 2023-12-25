@@ -48,6 +48,7 @@ const scanDir = (path) => {
 const getBase64 = (folder_name, image) => {
   if (!image || !folder_name) return null;
   const data = fs.readFileSync(`${folder_name}\\${image}`);
+  if (!data) return null;
   const extension = image.split(".")[1];
   const base64 = data.toString("base64");
   return "data:image/" + extension + ";base64," + base64;

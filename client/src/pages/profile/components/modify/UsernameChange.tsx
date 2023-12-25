@@ -5,16 +5,16 @@ import {
   useCallback,
   FormEvent,
 } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../../store/store";
-import { setCurrentSetting } from "../../../../../store/features/availableChatsSlice";
-import { fetchApi } from "../../../../../utils/api/fetchApi";
-import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
+import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { fetchApi } from "../../../../utils/api/fetchApi";
+import { BACKEND_URL } from "../../../../utils/api/constants";
+import { setCurrentSetting } from "../../../../store/features/availableChatsSlice";
 
-const NameChange = () => {
+const UsernameChange = () => {
   const dispatch = useAppDispatch();
-  const selected_chat = useAppSelector(
-    (state) => state.available_chats.selected_chat
-  );
+  //   const selected_chat = useAppSelector(
+  //     (state) => state.available_chats.selected_chat
+  //   );
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const current_user = useAppSelector((state) => state.current_user.user);
 
@@ -28,27 +28,25 @@ const NameChange = () => {
   const changeName = useCallback(
     (e: FormEvent) => {
       e.preventDefault();
-      if (name === selected_chat?.name || !name) return;
+      if (name === current_user?.username || !name) return;
 
       setFinalName(name);
     },
-    [name, selected_chat]
+    [name, current_user]
   );
 
   useLayoutEffect(() => {
-    if (selected_chat && selected_chat.name != '""')
-      setName(selected_chat.name);
-  }, [selected_chat]);
+    if (current_user) setName(current_user.username);
+  }, [current_user]);
 
   useEffect(() => {
-    if (access_token && finalName && current_user && selected_chat)
+    if (access_token && finalName && current_user)
       fetchData({
-        url: BACKEND_URL + "api/chats/changename",
+        url: BACKEND_URL + "api/users/changeusername",
         method: "PUT",
         data: {
           finalName,
-          user: current_user?.username,
-          chat_id: selected_chat?.id,
+          user_id: current_user?.id,
         },
         headers: {
           Authorization: "Bearer " + access_token,
@@ -57,33 +55,7 @@ const NameChange = () => {
   }, [finalName, access_token, current_user]);
 
   useEffect(() => {
-    const ws = new WebSocket(WEBSOCKET_URL);
-
-    if (success) {
-      ws.onopen = () => {
-        ws.send(
-          JSON.stringify({
-            users: selected_chat?.users,
-            type: "chat",
-          })
-        );
-
-        ws.send(
-          JSON.stringify({
-            id: success.data.message_id,
-            content: success.data.message,
-            chat_id: selected_chat?.id,
-            image: null,
-            created_at: new Date(),
-            type: "message",
-          })
-        );
-
-        dispatch(setCurrentSetting(null));
-      };
-    }
-
-    return () => ws.close();
+    if (success) window.location.reload();
   }, [success]);
 
   const closeSetting = useCallback(() => {
@@ -99,13 +71,13 @@ const NameChange = () => {
         <i className="fa fa-close"></i>
       </button>
       <h1 className="font-semibold text-md text-center flex justify-center items-center">
-        Modify chat name
+        Change username
       </h1>
       <form onSubmit={(e) => changeName(e)} className=" grid grid-rows-2">
         <div className="form-group p-2 flex justify-center items-center">
           <input
             type="text"
-            placeholder="Chat name"
+            placeholder="Username"
             className="form-control py-2 rounded-xl"
             value={name ? (name as string) : ""}
             onChange={(e) => setName(e.target.value)}
@@ -114,7 +86,7 @@ const NameChange = () => {
 
         <div className="grid grid-cols-2 p-[13px] gap-4">
           <button
-            disabled={name === selected_chat?.name || !name}
+            disabled={name === current_user?.username || !name}
             className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
           >
             Accept
@@ -132,4 +104,4 @@ const NameChange = () => {
   );
 };
 
-export default NameChange;
+export default UsernameChange;

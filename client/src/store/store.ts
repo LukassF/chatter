@@ -3,12 +3,14 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { userSlice } from "./features/currentUserSlice";
 import { availableChatsSlice } from "./features/availableChatsSlice";
 import { tokenSlice } from "./features/tokensSlice";
+import { messSlice } from "./features/messageSlice";
 
 export const store = configureStore({
   reducer: combineReducers({
     current_user: userSlice.reducer,
     available_chats: availableChatsSlice.reducer,
     tokens: tokenSlice.reducer,
+    messages: messSlice.reducer,
   }),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

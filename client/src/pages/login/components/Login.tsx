@@ -19,6 +19,7 @@ import {
 } from "../../../store/features/tokensSlice";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { RotatingLines } from "react-loader-spinner";
 
 const Login: FC = () => {
   const navigate = useNavigate();
@@ -36,10 +37,11 @@ const Login: FC = () => {
     return JSON.parse(saved);
   }, [window.localStorage]);
 
+  const [type, setType] = useState<boolean>(false);
   const [form, setForm] = useState<LoginData>();
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setData, setError, setLoading);
   const [usernameError, setUsernameError] = useState<string | null>();
   const [passwordError, setPasswordError] = useState<string | null>();
@@ -118,13 +120,13 @@ const Login: FC = () => {
   // }, [usernameError, passwordError]);
 
   return (
-    <section className="flex flex-col justify-center items-stretch w-full xs:w-[80%]">
+    <section className="flex flex-col justify-center items-stretch w-full xs:w-[85%]">
       <h3 className="text-center text-3xl font-bold mb-2">Log in below</h3>
       <h6 className="mb-5 text-md font-light text-center">
         Get back to chatting now!
       </h6>
-      <form onSubmit={logIn} className="flex flex-col gap-3" autoComplete="off">
-        <div className="form-group">
+      <form onSubmit={logIn} className="flex flex-col gap-1" autoComplete="off">
+        <div className="form-group p-2">
           <input
             defaultValue={init_user ? init_user.username : ""}
             type="text"
@@ -138,36 +140,63 @@ const Login: FC = () => {
           )}
         </div>
 
-        <div className="form-group">
+        <div className="form-group relative p-1">
+          {/* <div className="relative"> */}
           <input
             defaultValue={init_user ? init_user.password : ""}
-            type="password"
+            type={type ? "text" : "password"}
             placeholder="Password"
             name="password"
             className={`form-control ${passwordError && "is-invalid"}`}
             onChange={() => setPasswordError(null)}
           />
+          {!passwordError && (
+            <button
+              type="button"
+              onClick={() => setType((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-[30px] rounded-full  aspect-square hover:bg-stone-100 flex justify-center items-center"
+            >
+              <i className="fa fa-eye  text-muted"></i>
+            </button>
+          )}
+          {/* </div> */}
           {passwordError && (
             <div className="invalid-feedback">{passwordError}</div>
           )}
         </div>
 
-        <div className="form-group">
-          <div className="form-check">
-            <input
-              defaultChecked={remember}
-              className="form-check-input cursor-pointer"
-              type="checkbox"
-              id="rememberMe"
-              name="remember"
-              onChange={(e) => setRemember(e.target.checked)}
-            />
-            <label htmlFor="rememberMe">Remember me</label>
-          </div>
+        <div className="form-group p-1 flex justify-start items-center gap-2">
+          {/* <div className="form-check"> */}
+          <label htmlFor="rememberMe" className="text-sm text-stone-700">
+            Remember me
+          </label>
+          <input
+            defaultChecked={remember}
+            className="form-check-input cursor-pointer"
+            type="checkbox"
+            id="rememberMe"
+            name="remember"
+            onChange={(e) => setRemember(e.target.checked)}
+          />
+          {/* </div> */}
         </div>
 
-        <button className="btn btn-primary">Log in</button>
-        <span className="text-[12px] xs:text-sm text-gray-500">
+        <button className="btn btn-primary m-1 min-h-[39px]">
+          {loading ? (
+            <div className="flex justify-center items-center">
+              <RotatingLines
+                strokeColor="white"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="20"
+                visible={true}
+              />
+            </div>
+          ) : (
+            "Log in"
+          )}
+        </button>
+        <span className="text-[12px] xs:text-sm text-gray-500 m-1">
           Or{" "}
           <Link to="/signup">
             <em className="font-bold underline cursor-pointer hover:text-gray-700">

@@ -89,80 +89,80 @@ router.put("/manageusers", async (req, res) => {
   }
 });
 
-router.put("/modify", async (req, res) => {
-  const {
-    chat_id,
-    message,
-    base64,
-    name,
-    users,
-    added_users = [],
-    removed_users = [],
-  } = req.body;
+// router.put("/modify", async (req, res) => {
+//   const {
+//     chat_id,
+//     message,
+//     base64,
+//     name,
+//     users,
+//     added_users = [],
+//     removed_users = [],
+//   } = req.body;
 
-  users.sort((a, b) => Number(a) - Number(b));
+//   users.sort((a, b) => Number(a) - Number(b));
 
-  try {
-    let update_object = {};
+//   try {
+//     let update_object = {};
 
-    const chat_select = await supabase
-      .from("chats")
-      .select("user_ids,have_seen")
-      .eq("id", chat_id);
+//     const chat_select = await supabase
+//       .from("chats")
+//       .select("user_ids,have_seen")
+//       .eq("id", chat_id);
 
-    if (chat_select.error) throw new Error("Error querying chat");
-    const { user_ids, have_seen } = chat_select.data[0];
+//     if (chat_select.error) throw new Error("Error querying chat");
+//     const { user_ids, have_seen } = chat_select.data[0];
 
-    if (have_seen && have_seen.length > 0) {
-      let new_have_seen = Array(users.length).fill(null);
+//     if (have_seen && have_seen.length > 0) {
+//       let new_have_seen = Array(users.length).fill(null);
 
-      users.length > 0 &&
-        users.forEach((user, i) => {
-          let index = user_ids.indexOf(Number(user));
+//       users.length > 0 &&
+//         users.forEach((user, i) => {
+//           let index = user_ids.indexOf(Number(user));
 
-          if (index >= 0) new_have_seen[i] = have_seen[index];
-        });
+//           if (index >= 0) new_have_seen[i] = have_seen[index];
+//         });
 
-      update_object.have_seen = new_have_seen;
-    }
+//       update_object.have_seen = new_have_seen;
+//     }
 
-    if (base64) {
-      const path = await fileSaving.writeToFile(COVER_IMAGES, base64);
-      update_object.image = path;
-    }
+//     if (base64) {
+//       const path = await fileSaving.writeToFile(COVER_IMAGES, base64);
+//       update_object.image = path;
+//     }
 
-    if (name) update_object.name = name;
+//     if (name) update_object.name = name;
 
-    if (users.length > 1) update_object.user_ids = users;
+//     if (users.length > 1) update_object.user_ids = users;
 
-    update_object.updated_at = new Date();
+//     update_object.updated_at = new Date();
 
-    let all_messages = [message, ...added_users, ...removed_users];
-    all_messages = all_messages.filter((item) => item);
+//     let all_messages = [message, ...added_users, ...removed_users];
+//     all_messages = all_messages.filter((item) => item);
 
-    const { data, error } = await supabase
-      .from("messages")
-      .insert(all_messages)
-      .select("id");
+//     const { data, error } = await supabase
+//       .from("messages")
+//       .insert(all_messages)
+//       .select("id");
 
-    if (error) throw new Error("Could not send assosciated messages");
+//     if (error) throw new Error("Could not send assosciated messages");
 
-    if (data.length > 0) update_object.last_message = data.pop().id;
+//     if (data.length > 0) update_object.last_message = data.pop().id;
 
-    const chat_update = await supabase
-      .from("chats")
-      .update(update_object)
-      .eq("id", chat_id);
+//     const chat_update = await supabase
+//       .from("chats")
+//       .update(update_object)
+//       .eq("id", chat_id);
 
-    if (chat_update.error) throw new Error("Could not update chat");
+//     if (chat_update.error) throw new Error("Could not update chat");
 
-    return res.status(200).json({ success: "Update successful" });
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ error: "Error saving chat data", content: err });
-  }
-});
+//     return res.status(200).json({ success: "Update successful" });
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .json({ error: "Error saving chat data", content: err });
+//   }
+// });
 
 router.put("/changename", async (req, res) => {
   const { finalName, user, chat_id } = req.body;
@@ -217,6 +217,7 @@ router.put("/changeimage", async (req, res) => {
       .select("id");
 
     const message_id = data[0].id;
+
     if (error) throw new Error("Could not insert a message");
 
     const image_select = await supabase
@@ -227,8 +228,7 @@ router.put("/changeimage", async (req, res) => {
     if (image_select.error) throw new Error("Could not swap image");
 
     const img = image_select.data[0].image;
-
-    fileSaving.removeFile(COVER_IMAGES, img);
+    if (img) fileSaving.removeFile(COVER_IMAGES, img);
 
     let path = null;
     if (finalImage) {
@@ -245,13 +245,12 @@ router.put("/changeimage", async (req, res) => {
       .status(200)
       .json({ success: "Chat updated", message_id, message });
   } catch (err) {
-    return res.status(500).json({ error: "Could not update name" });
+    return res.status(500).json({ error: "Could not update image" });
   }
 });
 
 router.get("/getchats", async (req, res) => {
   const search = req.query.search;
-  console.log(PROFILE_IMAGES);
 
   try {
     const { data, error } = await supabase.rpc("get_chats_with_users", {
@@ -267,7 +266,6 @@ router.get("/getchats", async (req, res) => {
       if (chat.image)
         chat.image = fileSaving.getBase64(COVER_IMAGES, chat.image);
     });
-
     res.status(200).json(data);
   } catch (err) {
     return res.status(400).json({ error: "Could not get chats" });
@@ -276,7 +274,6 @@ router.get("/getchats", async (req, res) => {
 
 router.post("/createchat", async (req, res) => {
   const { name, users } = req.body;
-  console.log(name, users);
 
   users.sort((a, b) => Number(a) - Number(b));
 
@@ -284,7 +281,7 @@ router.post("/createchat", async (req, res) => {
     if (!name || !users || users.length < 2)
       throw new Error("Insufficient paramters");
 
-    let create_object = { name, user_ids: users };
+    let create_object = { name: '""', user_ids: users };
 
     const have_seen = Array(users.length).fill(null);
     create_object.have_seen = have_seen;

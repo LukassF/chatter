@@ -43,7 +43,7 @@ export const calculateTime = (date_str: string): string => {
       hours * msecs_in_hour) /
       msecs_in_minute
   );
-  if (minutes > 0) return minutes + " mn" + (minutes > 1 ? "s" : "");
+  if (minutes > 0) return minutes + " min" + (minutes > 1 ? "s" : "");
   const seconds = Math.floor(
     (time -
       years * msecs_in_year -

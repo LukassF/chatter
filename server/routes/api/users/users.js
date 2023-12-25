@@ -60,36 +60,119 @@ router.get("/getusers", async (req, res) => {
 
 //----------------------------------------------------
 
-router.put("/modify", async (req, res) => {
-  const { user_id, base64, username, password } = req.body;
+// router.put("/modify", async (req, res) => {
+//   const { user_id, base64, username, password } = req.body;
+
+//   try {
+//     let update_object = {};
+//     if (base64) {
+//       const path = await fileSaving.writeToFile(PROFILE_IMAGES, base64);
+//       update_object.image = path;
+//     }
+
+//     if (username) update_object.username = username;
+
+//     if (password && password.length >= 6) {
+//       const salt = await bcrypt.genSalt(10);
+//       const hashed_password = await bcrypt.hash(password, salt);
+//       update_object.password = hashed_password;
+//     }
+
+//     const { error } = await supabase
+//       .from("users")
+//       .update(update_object)
+//       .eq("id", user_id);
+
+//     if (error) throw new Error("could not update user");
+
+//     return res.status(200).json({ success: "Update successful" });
+//   } catch (err) {
+//     return res
+//       .status(500)
+//       .json({ error: "Error saving profile data", content: err });
+//   }
+// });
+
+// ----------------------------------------------------
+router.put("/changeusername", async (req, res) => {
+  const { finalName, user_id } = req.body;
+  console.log(finalName, user_id);
 
   try {
-    let update_object = {};
-    if (base64) {
-      const path = await fileSaving.writeToFile(PROFILE_IMAGES, base64);
-      update_object.image = path;
-    }
-
-    if (username) update_object.username = username;
-
-    if (password && password.length >= 6) {
-      const salt = await bcrypt.genSalt(10);
-      const hashed_password = await bcrypt.hash(password, salt);
-      update_object.password = hashed_password;
-    }
+    if (!finalName || !user_id) throw new Error("Not enough input arguments");
 
     const { error } = await supabase
       .from("users")
-      .update(update_object)
+      .update({
+        username: finalName,
+      })
       .eq("id", user_id);
 
-    if (error) throw new Error("could not update user");
+    if (error) throw new Error("Error updating username");
 
-    return res.status(200).json({ success: "Update successful" });
+    return res.status(200).json({ success: "Username updated" });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ error: "Error saving profile data", content: err });
+    return res.status(500).json({ error: "Could not update username" });
+  }
+});
+
+// ----------------------------------------------------
+router.put("/change_profile_image", async (req, res) => {
+  const { finalImage, user_id } = req.body;
+
+  try {
+    if (!user_id) throw new Error("Not enough input arguments");
+
+    const image_select = await supabase
+      .from("users")
+      .select("image")
+      .eq("id", user_id);
+
+    if (image_select.error) throw new Error("Could not swap image");
+
+    const img = image_select.data[0].image;
+    if (img) fileSaving.removeFile(PROFILE_IMAGES, img);
+
+    let path = null;
+    if (finalImage) {
+      path = await fileSaving.writeToFile(PROFILE_IMAGES, finalImage);
+    }
+    const { error } = await supabase
+      .from("users")
+      .update({ image: path })
+      .eq("id", user_id);
+
+    if (error) throw new Error("Error updating profile picture");
+
+    return res.status(200).json({ success: "Profile picture updated" });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not update image" });
+  }
+});
+
+// ------------------------------------------------------
+router.put("/change_password", async (req, res) => {
+  const { finalPassword, user_id } = req.body;
+
+  try {
+    if (!finalPassword || finalPassword.length < 6 || !user_id)
+      throw new Error("Not enough input arguments");
+
+    const salt = await bcrypt.genSalt(10);
+    const hashed_password = await bcrypt.hash(finalPassword, salt);
+
+    const { error } = await supabase
+      .from("users")
+      .update({
+        password: hashed_password,
+      })
+      .eq("id", user_id);
+
+    if (error) throw new Error("Error updating password");
+
+    return res.status(200).json({ success: "Password updated" });
+  } catch (err) {
+    return res.status(500).json({ error: "Could not update password" });
   }
 });
 

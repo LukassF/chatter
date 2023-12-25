@@ -6,6 +6,9 @@ export enum Settings {
   image = "image",
   users = "users",
   create = "create",
+  username = "username",
+  user_image = "user_image",
+  password = "password",
 }
 
 interface ChatState {
