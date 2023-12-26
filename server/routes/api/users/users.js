@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const supabase = require("../../../utils/supabase");
 const fileSaving = require("../../../utils/fileSaving");
 
-const PROFILE_IMAGES = __dirname + "\\profile_images";
+const PROFILE_IMAGES = __dirname + "/profile_images";
 
 //----------------------------------------------------
 

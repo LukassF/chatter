@@ -4,7 +4,7 @@ require("dotenv/config");
 const supabase = require("../../../utils/supabase");
 const fileSaving = require("../../../utils/fileSaving");
 
-const MESSAGE_IMAGES = __dirname + "\\message_images";
+const MESSAGE_IMAGES = __dirname + "/message_images";
 
 router.post("/send", async (req, res) => {
   const { message, user_id, chat_id, image } = req.body;
