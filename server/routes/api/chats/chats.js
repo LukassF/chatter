@@ -5,7 +5,7 @@ const path = require("path");
 const supabase = require("../../../utils/supabase");
 const fileSaving = require("../../../utils/fileSaving");
 
-const COVER_IMAGES = __dirname + "\\cover_images";
+const COVER_IMAGES = __dirname + "/cover_images";
 const PROFILE_IMAGES = path.resolve("routes/api/users", "profile_images");
 
 router.put("/manageusers", async (req, res) => {
