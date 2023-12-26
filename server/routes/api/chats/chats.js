@@ -252,7 +252,7 @@ router.put("/changeimage", async (req, res) => {
 router.get("/getchats", async (req, res) => {
   const search = req.query.search;
 
-  console.log(PROFILE_IMAGES);
+  console.log(PROFILE_IMAGES, COVER_IMAGES);
 
   try {
     const { data, error } = await supabase.rpc("get_chats_with_users", {
