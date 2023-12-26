@@ -164,7 +164,7 @@ const IndividualMessage = ({
                   height: "100%",
                   objectFit: "cover",
                 }}
-                className="group-hover:scale-105 transition-all"
+                className="group-hover:scale-105 transition-all duration-500"
               />
             </div>
           )}

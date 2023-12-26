@@ -41,7 +41,7 @@ const Aside = () => {
 
   return (
     <aside
-      className={`py-3 px-2 sm:flex flex-col justify-between min-w-[70px] h-screen overflow-y-auto ${
+      className={`py-3 px-2 sm:flex flex-col justify-between min-w-[65px] h-screen overflow-y-auto ${
         selected_chat ? "hidden" : "flex"
       }`}
     >

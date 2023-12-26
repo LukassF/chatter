@@ -170,7 +170,9 @@ const MessageLog = () => {
             />
           ))
         ) : error ? (
-          <div>Timeout error occured, please try again</div>
+          <div className="p-3 text-center text-muted text-lg">
+            Timeout error occured, please try again
+          </div>
         ) : (
           !loading && (
             <p className="text-center w-full text-md p-3 text-muted">

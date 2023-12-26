@@ -13,7 +13,7 @@ const ProfilePopover = ({
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   return (
-    <div className="w-screen h-screen xs:w-[300px] overflow-y-auto xs:h-[450px] max-h-[92vh] xs:rounded-xl shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] bg-white fixed left-0 xs:left-[7vw]  bottom-0 xs:my-[7vh] z-[100] p-2  ">
+    <div className="w-screen h-screen xs:w-[300px] overflow-y-auto xs:h-[450px] xs:max-h-[92vh] xs:rounded-xl shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] bg-white fixed left-0 xs:left-[7vw]  bottom-0 xs:my-[7vh] z-[100] p-2  ">
       <button
         onClick={() => setPopover(false)}
         className="absolute left-2 top-2 w-[25px] aspect-square hover:bg-blue-200 bg-blue-100 text-blue-600 rounded-full flex justify-center items-center"
