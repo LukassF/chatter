@@ -11,8 +11,9 @@ import {
 import IndividualMessage from "./Message";
 import MessagesSkeleton from "../chat/loaders/MessagesSkeleton";
 import { RotatingLines } from "react-loader-spinner";
+import IndividualMessageSkeleton from "../chat/loaders/IndividualMessageSkeleton";
 
-const MessageLog = () => {
+const MessageLog = ({ parent_loading }: { parent_loading: boolean }) => {
   //helper to reload last selected chat
   const [lastSelected, setLastSelected] = useState<number>(0);
 
@@ -180,6 +181,8 @@ const MessageLog = () => {
             </p>
           )
         )}
+
+        {parent_loading && <IndividualMessageSkeleton />}
       </div>
       <div ref={messageEndRef}></div>
     </div>

@@ -6,7 +6,11 @@ import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import { toBase64 } from "../../../../utils/api/toBase64";
 import { RotatingLines } from "react-loader-spinner";
 
-const MessageInput = () => {
+const MessageInput = ({
+  setParentLoading,
+}: {
+  setParentLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
   const current_user = useAppSelector((state) => state.current_user.user);
   const selected_chat = useAppSelector(
@@ -38,6 +42,11 @@ const MessageInput = () => {
       })();
     }
   }, [image]);
+
+  useEffect(() => {
+    if (image && loading) setParentLoading(true);
+    if (!loading) setParentLoading(false);
+  }, [loading]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);

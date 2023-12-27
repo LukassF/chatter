@@ -1,4 +1,4 @@
-import { FC, useMemo, useEffect } from "react";
+import { FC, useMemo, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
   setMessages,
@@ -21,6 +21,8 @@ const ChatBox: FC = () => {
   const current_user = useAppSelector((state) => state.current_user.user);
   const image_fs = useAppSelector((state) => state.messages.image_fs);
   const selected_image = useAppSelector((state) => state.messages.image);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   const alternateName = useMemo(() => {
     const names = selected_chat?.users
@@ -87,10 +89,10 @@ const ChatBox: FC = () => {
         </button>
       </header>
       <article>
-        <MessageLog />
+        <MessageLog parent_loading={loading} />
       </article>
       <footer className="bg-white min-h-[60px]">
-        <MessageInput />
+        <MessageInput setParentLoading={setLoading} />
       </footer>
     </section>
   );
