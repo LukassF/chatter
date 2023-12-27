@@ -154,7 +154,7 @@ const IndividualMessage = ({
                 dispatch(toggleFS(true));
                 dispatch(setImage(item.image ? item.image : undefined));
               }}
-              className=" w-[200px] aspect-[20/13] max-w-full relative mb-1  overflow-hidden rounded-lg group bg-white cursor-pointer "
+              className=" xs:max-w-[200px] max-w-full relative mb-1  overflow-hidden rounded-lg group bg-white cursor-pointer "
             >
               <img
                 src={item.image}
@@ -162,7 +162,7 @@ const IndividualMessage = ({
                 style={{
                   width: "100%",
                   height: "100%",
-                  objectFit: "cover",
+                  objectFit: "contain",
                 }}
                 className="group-hover:scale-105 transition-all duration-500"
               />
