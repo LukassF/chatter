@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 require("dotenv/config");
 const supabase = require("../../../utils/supabase");
+const cloudinary = require("../../../utils/cloudinary");
 const fileSaving = require("../../../utils/fileSaving");
 
 const MESSAGE_IMAGES = __dirname + "/message_images";
@@ -15,13 +16,23 @@ router.post("/send", async (req, res) => {
 
     let insert_object = { content: message, user_id, chat_id };
 
+    // if (image) {
+    //   const path = await fileSaving.writeToFile(
+    //     MESSAGE_IMAGES,
+    //     image,
+    //     "message"
+    //   );
+    //   insert_object.image = path;
+    // }
+
     if (image) {
-      const path = await fileSaving.writeToFile(
-        MESSAGE_IMAGES,
-        image,
-        "message"
-      );
-      insert_object.image = path;
+      try {
+        const url = await cloudinary.uploadImage(image, "message_images");
+
+        if (url) insert_object.image = url;
+      } catch (err) {
+        throw new Error("Could not save image");
+      }
     }
 
     const { data, error } = await supabase
@@ -67,12 +78,12 @@ router.get("/getall", async (req, res) => {
 
     if (error) throw new Error(error);
 
-    data.forEach((msg) => {
-      if (msg.image) {
-        let base64 = fileSaving.getBase64(MESSAGE_IMAGES, msg.image);
-        msg.image = base64;
-      }
-    });
+    // data.forEach((msg) => {
+    //   if (msg.image) {
+    //     let base64 = fileSaving.getBase64(MESSAGE_IMAGES, msg.image);
+    //     msg.image = base64;
+    //   }
+    // });
 
     res.status(200).json(data);
   } catch (err) {

@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import { toBase64 } from "../../../../../utils/api/toBase64";
 import { fetchApi } from "../../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
+import { RotatingLines } from "react-loader-spinner";
 
 const ImageChange = () => {
   const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ const ImageChange = () => {
   const [finalImage, setFinalImage] = useState<string | null | undefined>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const convertImage = useCallback(async (e: ChangeEvent) => {
@@ -141,10 +142,20 @@ const ImageChange = () => {
 
           <div className="grid grid-cols-2 p-[13px] gap-4">
             <button
-              disabled={image === selected_chat?.image}
+              disabled={image === selected_chat?.image || loading}
               className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100 py-2"
             >
-              Accept
+              {!loading ? (
+                "Accept"
+              ) : (
+                <RotatingLines
+                  strokeColor="grey"
+                  strokeWidth="5"
+                  animationDuration="0.75"
+                  width="16"
+                  visible={true}
+                />
+              )}
             </button>
             <button
               type="button"

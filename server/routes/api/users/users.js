@@ -3,6 +3,7 @@ const router = express.Router();
 require("dotenv/config");
 const bcrypt = require("bcryptjs");
 const supabase = require("../../../utils/supabase");
+const cloudinary = require("../../../utils/cloudinary");
 const fileSaving = require("../../../utils/fileSaving");
 
 const PROFILE_IMAGES = __dirname + "/profile_images";
@@ -21,8 +22,8 @@ router.get("/getuser", async (req, res) => {
     if (error) throw new Error("fetch failed");
 
     if (data[0].image) {
-      const base64 = fileSaving.getBase64(PROFILE_IMAGES, data[0].image);
-      return res.json({ ...data[0], image: base64 });
+      // const base64 = fileSaving.getBase64(PROFILE_IMAGES, data[0].image);
+      return res.json({ ...data[0], image: data[0].image });
     }
 
     return res.json(data[0]);
@@ -47,10 +48,10 @@ router.get("/getusers", async (req, res) => {
 
     if (error || data.length === 0) throw new Error(error);
 
-    data.map((user) => {
-      if (user.image)
-        user.image = fileSaving.getBase64(PROFILE_IMAGES, user.image);
-    });
+    // data.map((user) => {
+    //   if (user.image)
+    //     user.image = fileSaving.getBase64(PROFILE_IMAGES, user.image);
+    // });
 
     return res.json(data);
   } catch (err) {
@@ -131,12 +132,34 @@ router.put("/change_profile_image", async (req, res) => {
     if (image_select.error) throw new Error("Could not swap image");
 
     const img = image_select.data[0].image;
-    if (img) fileSaving.removeFile(PROFILE_IMAGES, img);
+    if (img) {
+      try {
+        await cloudinary.removeImage(img);
+      } catch (err) {
+        throw new Error("Could not delete images");
+      }
+    }
 
     let path = null;
     if (finalImage) {
-      path = await fileSaving.writeToFile(PROFILE_IMAGES, finalImage);
+      try {
+        const result = await cloudinary.uploadImage(
+          finalImage,
+          "profile_images"
+        );
+
+        if (result) path = result;
+      } catch (err) {
+        throw new Error("Could not upload image");
+      }
+
+      // path = await fileSaving.writeToFile(COVER_IMAGES, finalImage);
     }
+
+    // let path = null;
+    // if (finalImage) {
+    //   path = await fileSaving.writeToFile(PROFILE_IMAGES, finalImage);
+    // }
     const { error } = await supabase
       .from("users")
       .update({ image: path })

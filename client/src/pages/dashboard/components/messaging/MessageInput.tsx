@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 
 import { toBase64 } from "../../../../utils/api/toBase64";
+import { RotatingLines } from "react-loader-spinner";
 
 const MessageInput = () => {
   const access_token = useAppSelector((state) => state.tokens.access_token);
@@ -23,7 +24,7 @@ const MessageInput = () => {
   const [payload, setPayload] = useState<Record<string, any>>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   //
@@ -104,7 +105,7 @@ const MessageInput = () => {
 
   return (
     <>
-      {base64 && (
+      {base64 && !loading && (
         <div className="bg-stone-100 rounded-lg mx-3 h-20 md:h-28 w-3/4 md:w-1/2 absolute bottom-16 z-0 flex justify-start items-center p-[8px]">
           <div className="h-full relative p-[8px]">
             <div className="h-full aspect-square rounded-md overflow-hidden">
@@ -137,7 +138,9 @@ const MessageInput = () => {
         } gap-2 px-2 py-1 justify-center items-center`}
       >
         <input
-          className="text-xs sm:text-md rounded-xl xs:rounded-full h-2/3 px-3 border-2 border-stone-200 bg-stone-100 outline-none"
+          disabled={loading}
+          readOnly={loading}
+          className="disabled:opacity-50 disabled:cursor-not-allowed disabled:select-none text-xs sm:text-md rounded-xl xs:rounded-full h-2/3 px-3 border-2 border-stone-200 bg-stone-100 outline-none"
           type="text"
           placeholder="Your message"
           name="message"
@@ -152,15 +155,29 @@ const MessageInput = () => {
           onChange={(e) => setImage(e.target?.files ? e.target.files[0] : null)}
         ></input>
         <button
+          disabled={loading}
           type="button"
-          className="hover:bg-gray-100 h-3/4 text-blue-600 max-h-[40px] xs:max-h-[45px] rounded-full aspect-square flex justify-center items-center"
+          className="disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 h-3/4 text-blue-600 max-h-[40px] xs:max-h-[45px] rounded-full aspect-square flex justify-center items-center"
           onClick={() => fileRef.current?.click()}
         >
           <i className="fa fa-image"></i>
         </button>
         {/* EMOJI PICKER */}
-        <button className="hover:bg-gray-100 text-blue-600 h-3/4  max-h-[40px] xs:max-h-[45px] rounded-full aspect-square flex justify-center items-center">
-          <i className="fa fa-paper-plane"></i>
+        <button
+          disabled={loading}
+          className="disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 text-blue-600 h-3/4  max-h-[40px] xs:max-h-[45px] rounded-full aspect-square flex justify-center items-center"
+        >
+          {!loading ? (
+            <i className="fa fa-paper-plane"></i>
+          ) : (
+            <RotatingLines
+              strokeColor="blue"
+              strokeWidth="5"
+              animationDuration="0.75"
+              width="16"
+              visible={true}
+            />
+          )}
         </button>
       </form>
     </>

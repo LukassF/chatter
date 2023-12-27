@@ -3,6 +3,7 @@ const router = express.Router();
 require("dotenv/config");
 const path = require("path");
 const supabase = require("../../../utils/supabase");
+const cloudinary = require("../../../utils/cloudinary");
 const fileSaving = require("../../../utils/fileSaving");
 
 const COVER_IMAGES = __dirname + "/cover_images";
@@ -228,11 +229,25 @@ router.put("/changeimage", async (req, res) => {
     if (image_select.error) throw new Error("Could not swap image");
 
     const img = image_select.data[0].image;
-    if (img) fileSaving.removeFile(COVER_IMAGES, img);
+    if (img) {
+      try {
+        await cloudinary.removeImage(img);
+      } catch (err) {
+        throw new Error("Could not delete images");
+      }
+    }
 
     let path = null;
     if (finalImage) {
-      path = await fileSaving.writeToFile(COVER_IMAGES, finalImage);
+      try {
+        const result = await cloudinary.uploadImage(finalImage, "cover_images");
+
+        if (result) path = result;
+      } catch (err) {
+        throw new Error("Could not upload image");
+      }
+
+      // path = await fileSaving.writeToFile(COVER_IMAGES, finalImage);
     }
     const chat_update = await supabase
       .from("chats")
@@ -252,8 +267,6 @@ router.put("/changeimage", async (req, res) => {
 router.get("/getchats", async (req, res) => {
   const search = req.query.search;
 
-  console.log(PROFILE_IMAGES, COVER_IMAGES);
-
   try {
     const { data, error } = await supabase.rpc("get_chats_with_users", {
       user_id: req.user.user.id,
@@ -264,10 +277,10 @@ router.get("/getchats", async (req, res) => {
 
     explicitUsers(data);
 
-    data.map((chat) => {
-      if (chat.image)
-        chat.image = fileSaving.getBase64(COVER_IMAGES, chat.image);
-    });
+    // data.map((chat) => {
+    //   if (chat.image)
+    //     chat.image = fileSaving.getBase64(COVER_IMAGES, chat.image);
+    // });
     res.status(200).json(data);
   } catch (err) {
     return res.status(400).json({ error: "Could not get chats" });
@@ -392,7 +405,7 @@ const explicitUsers = (chats) => {
         id: parseInt(id),
         username: chat.usernames[index],
         email: chat.emails[index],
-        image: fileSaving.getBase64(PROFILE_IMAGES, chat.user_images[index]),
+        image: chat.user_images[index],
         has_seen: chat.have_seen ? chat.have_seen[index] : null,
       });
     });
