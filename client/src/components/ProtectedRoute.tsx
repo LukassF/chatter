@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import React from "react";
 
-const PROTECTED_PATHS = ["/profile", "/"];
+const PROTECTED_PATHS = ["/"];
 const PUBLIC_PATHS = ["/login", "/signup"];
 
 type protectedProps = {

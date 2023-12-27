@@ -3,15 +3,12 @@ import { fetchApi } from "../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
-  addChats,
-  addManyMessages,
   addMessage,
   pushToTop,
   setChats,
   setLastMessage,
   setSelectedChat,
   setUserHasSeen,
-  toggleSettings,
   triggerChatReload,
 } from "../../../../store/features/availableChatsSlice";
 import { User } from "../../../../store/features/currentUserSlice";

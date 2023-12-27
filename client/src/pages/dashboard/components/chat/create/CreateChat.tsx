@@ -1,24 +1,19 @@
-import { useState, useCallback, useEffect, useRef, FormEvent } from "react";
+import { useState, useCallback, useEffect } from "react";
 import FoundUsersList from "../../../../../components/FoundUsersList";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import { fetchApi } from "../../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
-import {
-  addChats,
-  setCurrentSetting,
-  triggerChatReload,
-} from "../../../../../store/features/availableChatsSlice";
+import { setCurrentSetting } from "../../../../../store/features/availableChatsSlice";
 import { User } from "../../../../../store/features/currentUserSlice";
-import { toBase64 } from "../../../../../utils/api/toBase64";
+
 import { ChatMember } from "../../../../../utils/types";
+import toast from "react-hot-toast";
+import { RotatingLines } from "react-loader-spinner";
 
 const CreateChat = () => {
   const dispatch = useAppDispatch();
   const current_user = useAppSelector((state) => state.current_user.user);
   const access_token = useAppSelector((state) => state.tokens.access_token);
-  const selected_chat = useAppSelector(
-    (state) => state.available_chats.selected_chat
-  );
 
   const [input, setInput] = useState<string | undefined>();
   const [selected_users, setSelectedUsers] = useState<ChatMember[]>([]);
@@ -74,29 +69,16 @@ const CreateChat = () => {
           })
         );
 
-        // let messages = success.data.messages.map(
-        //   (mess: { id: number; message: string }) => ({
-        //     id: mess.id,
-        //     content: mess.message,
-        //     chat_id: selected_chat?.id,
-        //     image: null,
-        //     created_at: new Date(),
-        //   })
-        // );
-
-        // ws.send(
-        //   JSON.stringify({
-        //     messages,
-        //     type: "message",
-        //   })
-        // );
-
         dispatch(setCurrentSetting(null));
       };
     }
 
     return () => ws.close();
   }, [success]);
+
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
 
   const closeSetting = useCallback(() => {
     dispatch(setCurrentSetting(null));
@@ -179,7 +161,17 @@ const CreateChat = () => {
             disabled={selected_users.length === 0}
             className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
           >
-            Accept
+            {!loading ? (
+              "Accept"
+            ) : (
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="16"
+                visible={true}
+              />
+            )}
           </button>
           <button
             type="button"

@@ -1,4 +1,3 @@
-import React from "react";
 import { useAppSelector } from "../store/store";
 import { Settings } from "../store/features/availableChatsSlice";
 import NameChange from "../pages/dashboard/components/chat/settings/NameChange";

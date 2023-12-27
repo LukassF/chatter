@@ -4,13 +4,12 @@ import {
   FormEvent,
   useState,
   useEffect,
-  ChangeEvent,
   useMemo,
 } from "react";
 import { fetchApi } from "../../../utils/api/fetchApi";
 import { BACKEND_URL } from "../../../utils/api/constants";
 import { LoginData } from "../../../utils/types";
-import { useAppDispatch, useAppSelector } from "../../../store/store";
+import { useAppDispatch } from "../../../store/store";
 import { fetchUser } from "../../../store/features/currentUserSlice";
 import { decodeToken } from "../../../utils/decodeToken";
 import {
@@ -24,7 +23,6 @@ import { RotatingLines } from "react-loader-spinner";
 const Login: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const access_token = useAppSelector((state) => state.tokens.access_token);
 
   const init_user = useMemo((): {
     username: string;

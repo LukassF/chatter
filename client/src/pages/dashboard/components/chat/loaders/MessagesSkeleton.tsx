@@ -1,5 +1,3 @@
-import React from "react";
-
 const MessagesSkeleton = () => {
   return (
     <article className="w-full flex flex-col justify-center gap-2 px-2">

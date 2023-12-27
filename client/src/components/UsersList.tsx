@@ -26,8 +26,8 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
   );
 
   const [success, setSuccess] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [__, setError] = useState<any>(null);
+  const [_, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const removeUser = useCallback(

@@ -12,6 +12,7 @@ import { toBase64 } from "../../../../utils/api/toBase64";
 import { setCurrentSetting } from "../../../../store/features/availableChatsSlice";
 import { BACKEND_URL } from "../../../../utils/api/constants";
 import { RotatingLines } from "react-loader-spinner";
+import toast from "react-hot-toast";
 
 const ProfileImageChange = () => {
   const dispatch = useAppDispatch();
@@ -69,6 +70,10 @@ const ProfileImageChange = () => {
   useEffect(() => {
     if (success) window.location.reload();
   }, [success]);
+
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
 
   return (
     <div className="max-w-screen min-h-[200px] sm:w-[500px] text-sm sm:text-md sm:aspect-[5/2] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-3 gap-2 grid xs:grid-cols-[1fr_2fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">

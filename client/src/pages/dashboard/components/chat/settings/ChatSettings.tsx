@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import {
   Settings,
@@ -11,6 +11,7 @@ import { fetchApi } from "../../../../../utils/api/fetchApi";
 import Swal from "sweetalert2";
 
 import UsersList from "../../../../../components/UsersList";
+import toast from "react-hot-toast";
 
 const ChatSettings = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,7 @@ const ChatSettings = () => {
   const [perform_delete, setPerformDelete] = useState<boolean>(false);
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [_, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const leaveChat = useCallback(() => {
@@ -127,6 +128,10 @@ const ChatSettings = () => {
 
     return () => ws.close();
   }, [success]);
+
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
 
   return (
     <>

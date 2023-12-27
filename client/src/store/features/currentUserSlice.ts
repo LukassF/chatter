@@ -22,6 +22,7 @@ const initialState: UserState = {
 
 export const fetchUser = createAsyncThunk("fetch_user", async (user: User) => {
   // if (!user.image) return;
+  console.log(user);
 
   const state = store.getState();
   let access_token_st = state.tokens.access_token;

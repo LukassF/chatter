@@ -1,4 +1,3 @@
-import { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import {
   Settings,

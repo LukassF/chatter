@@ -32,8 +32,8 @@ const Dashboard: FC = () => {
   const messages = useAppSelector((state) => state.available_chats.messages);
 
   const [success, setSuccess] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [__, setError] = useState<any>(null);
+  const [_, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const [chatsearch, setChatSearch] = useState<string | null>("");

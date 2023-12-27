@@ -6,6 +6,8 @@ import { User } from "../../../../../store/features/currentUserSlice";
 import { ChatMember } from "../../../../../utils/types";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
 import { fetchApi } from "../../../../../utils/api/fetchApi";
+import { RotatingLines } from "react-loader-spinner";
+import toast from "react-hot-toast";
 
 const AddUsers = () => {
   const dispatch = useAppDispatch();
@@ -100,6 +102,10 @@ const AddUsers = () => {
     return () => ws.close();
   }, [success]);
 
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
+
   return (
     <div className="max-w-[95vw] w-[500px] sm:aspect-[4/5]  bg-white rounded-xl p-3 gap-2 shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative left-1/2 -translate-x-1/2">
       <button
@@ -177,7 +183,17 @@ const AddUsers = () => {
             disabled={selected_users.length === 0}
             className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
           >
-            Accept
+            {!loading ? (
+              "Accept"
+            ) : (
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="16"
+                visible={true}
+              />
+            )}
           </button>
           <button
             type="button"

@@ -1,10 +1,10 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { BACKEND_URL } from "../../../../utils/api/constants";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { deleteTokens } from "../../../../store/features/tokensSlice";
-import { Link } from "react-router-dom";
 import ProfilePopover from "./ProfilePopover";
+import toast from "react-hot-toast";
 
 const Aside = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +16,7 @@ const Aside = () => {
   const [popover, setPopover] = useState<boolean>(false);
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [_, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const logout = useCallback(() => {
@@ -38,6 +38,14 @@ const Aside = () => {
   const togglePopover = useCallback(() => {
     setPopover((prev) => !prev);
   }, [popover]);
+
+  useEffect(() => {
+    if (success) toast.success("Log out successfull");
+  }, [success]);
+
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
 
   return (
     <aside

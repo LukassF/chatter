@@ -1,14 +1,10 @@
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useLayoutEffect,
-  FormEvent,
-} from "react";
+import { useState, useEffect, useCallback, FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/store";
 import { fetchApi } from "../../../../utils/api/fetchApi";
 import { BACKEND_URL } from "../../../../utils/api/constants";
 import { setCurrentSetting } from "../../../../store/features/availableChatsSlice";
+import { RotatingLines } from "react-loader-spinner";
+import toast from "react-hot-toast";
 
 const PasswordChange = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +21,7 @@ const PasswordChange = () => {
   >();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const [first_type, setFirstType] = useState<boolean>(false);
@@ -60,6 +56,10 @@ const PasswordChange = () => {
   useEffect(() => {
     if (success) window.location.reload();
   }, [success]);
+
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
 
   const closeSetting = useCallback(() => {
     dispatch(setCurrentSetting(null));
@@ -123,7 +123,17 @@ const PasswordChange = () => {
             }
             className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
           >
-            Accept
+            {!loading ? (
+              "Accept"
+            ) : (
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="16"
+                visible={true}
+              />
+            )}
           </button>
           <button
             type="button"

@@ -1,6 +1,6 @@
 import { FormEvent, useState, useEffect, useRef } from "react";
 import { fetchApi } from "../../../../utils/api/fetchApi";
-import { useAppDispatch, useAppSelector } from "../../../../store/store";
+import { useAppSelector } from "../../../../store/store";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../utils/api/constants";
 
 import { toBase64 } from "../../../../utils/api/toBase64";
@@ -12,7 +12,6 @@ const MessageInput = () => {
   const selected_chat = useAppSelector(
     (state) => state.available_chats.selected_chat
   );
-  const dispatch = useAppDispatch();
   const settings_open = useAppSelector(
     (state) => state.available_chats.settings_open
   );
@@ -23,7 +22,7 @@ const MessageInput = () => {
   const [base64, setBase64] = useState<string | ArrayBuffer | null>(null);
   const [payload, setPayload] = useState<Record<string, any>>();
   const [success, setSuccess] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
+  const [_, setError] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 

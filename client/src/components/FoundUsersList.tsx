@@ -98,6 +98,10 @@ const FoundUsersList = ({
               />
             </div>
           ))
+      ) : error ? (
+        <div className="self-center w-full text-center text-sm text-muted">
+          Error getting users
+        </div>
       ) : (
         <div className="self-center w-full text-center text-sm text-muted">
           No users found

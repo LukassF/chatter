@@ -11,8 +11,8 @@ const ModifyProfile = () => {
   const fileInput = useRef<HTMLInputElement>(null);
   const [payload, setPayload] = useState<Record<any, any>>();
   const [success, setSuccess] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [_, setError] = useState<any>(null);
+  const [__, setLoading] = useState<boolean>(true);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const changeData = useCallback(

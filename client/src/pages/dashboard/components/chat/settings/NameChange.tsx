@@ -9,6 +9,8 @@ import { useAppDispatch, useAppSelector } from "../../../../../store/store";
 import { setCurrentSetting } from "../../../../../store/features/availableChatsSlice";
 import { fetchApi } from "../../../../../utils/api/fetchApi";
 import { BACKEND_URL, WEBSOCKET_URL } from "../../../../../utils/api/constants";
+import toast from "react-hot-toast";
+import { RotatingLines } from "react-loader-spinner";
 
 const NameChange = () => {
   const dispatch = useAppDispatch();
@@ -22,7 +24,7 @@ const NameChange = () => {
   const [finalName, setFinalName] = useState<string | undefined | null>();
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const changeName = useCallback(
@@ -90,6 +92,10 @@ const NameChange = () => {
     dispatch(setCurrentSetting(null));
   }, []);
 
+  useEffect(() => {
+    if (error) toast.error("Something went wrong");
+  }, [error]);
+
   return (
     <div className="max-w-screen min-h-[200px] sm:w-[500px] text-sm sm:text-md sm:aspect-[5/2] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-3 grid grid-rows-[1fr_3.5fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">
       <button
@@ -117,7 +123,17 @@ const NameChange = () => {
             disabled={name === selected_chat?.name || !name}
             className="rounded-md bg-stone-100 flex justify-center items-center hover:bg-stone-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-stone-100"
           >
-            Accept
+            {!loading ? (
+              "Accept"
+            ) : (
+              <RotatingLines
+                strokeColor="grey"
+                strokeWidth="5"
+                animationDuration="0.75"
+                width="16"
+                visible={true}
+              />
+            )}
           </button>
           <button
             type="button"
