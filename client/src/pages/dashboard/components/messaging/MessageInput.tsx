@@ -51,6 +51,10 @@ const MessageInput = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (inputRef) inputRef.current?.focus();
+  });
+
   //
 
   const sendMessage = async (event: FormEvent) => {
@@ -91,6 +95,7 @@ const MessageInput = ({
     if (success && success.data.message_id) {
       setImage(null);
       setBase64(null);
+
       if (inputRef.current) inputRef.current.value = "";
       if (fileRef.current) fileRef.current.value = "";
       ws.onopen = () => {
