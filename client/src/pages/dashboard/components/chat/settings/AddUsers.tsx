@@ -24,7 +24,7 @@ const AddUsers = () => {
   );
   const [success, setSuccess] = useState<any>(null);
   const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const fetchData = fetchApi(setSuccess, setError, setLoading);
 
   const closeSetting = useCallback(() => {
