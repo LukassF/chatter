@@ -124,9 +124,9 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
               className="rounded-md cursor-default hover:bg-stone-100 grid grid-cols-[1fr_3fr_1fr] xs:grid-cols-[1fr_6fr_1fr] sm:grid-cols-[1fr_2.8fr_0.8fr] min-h-[20px]"
             >
               <div className="p-[5px] min-w-[50px]">
-                <div className="aspect-square rounded-full w-[35px] ">
+                <div className="aspect-square rounded-full w-[35px] relative flex items-stretch">
                   <img
-                    className="w-full h-full object-cover"
+                    className="w-full object-cover"
                     src={
                       user.image
                         ? user.image
@@ -136,10 +136,10 @@ const UsersList = ({ chat }: { chat: Chat | undefined }) => {
                   />
                 </div>
               </div>
-              <div className=" flex flex-col items-start justify-center p-[5px]">
-                <h3 className="font-medium text-md truncate w-full">
+              <div className="flex flex-col items-start justify-center p-[5px]">
+                <span className="font-medium text-md truncate w-full">
                   {user.username}
-                </h3>
+                </span>
                 <p className="font-light text-xs text-muted truncate w-full">
                   {user.email}
                 </p>

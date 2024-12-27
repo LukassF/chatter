@@ -107,7 +107,7 @@ const Dashboard: FC = () => {
         >
           <div className="flex flex-col gap-2 justify-evenly min-h-[100px]">
             <div className="flex justify-between items-center px-4">
-              <h1 className="text-xl sm:text-2xl font-bold">Chats</h1>
+              <span className="text-xl sm:text-2xl font-bold">Chats</span>
               <button
                 onClick={() => dispatch(setCurrentSetting(Settings.create))}
                 className="p-[8px] sm:p-[10px]  text-blue-400 border-[1.5px] border-blue-400 hover:text-blue-600 hover:border-blue-600  rounded-full aspect-square text-xs sm:text-sm flex justify-center items-center opacity-70"

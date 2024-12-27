@@ -109,10 +109,10 @@ const Signup: FC = () => {
 
   return (
     <section className="flex flex-col justify-center items-stretch w-full xs:w-[85%] ">
-      <h3 className="text-center text-3xl font-bold mb-2">Sign up below</h3>
-      <h6 className="mb-5 text-md font-light text-center">
+      <span className="text-center text-3xl font-bold mb-2">Sign up below</span>
+      <span className="mb-5 text-md font-light text-center">
         Join our amazing community!
-      </h6>
+      </span>
       <form
         onSubmit={signUp}
         className="flex flex-col gap-1"

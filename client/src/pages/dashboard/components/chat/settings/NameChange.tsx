@@ -104,9 +104,9 @@ const NameChange = () => {
       >
         <i className="fa fa-close"></i>
       </button>
-      <h1 className="font-semibold text-md text-center flex justify-center items-center">
+      <span className="font-semibold text-md text-center flex justify-center items-center">
         Modify chat name
-      </h1>
+      </span>
       <form onSubmit={(e) => changeName(e)} className=" grid grid-rows-2">
         <div className="form-group p-2 flex justify-center items-center">
           <input

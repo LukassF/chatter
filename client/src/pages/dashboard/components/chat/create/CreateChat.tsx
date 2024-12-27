@@ -85,7 +85,7 @@ const CreateChat = () => {
   }, []);
 
   return (
-    <div className="max-w-[95vw] w-[500px] sm:aspect-[4/5]  bg-white rounded-xl p-3 gap-2 shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative left-1/2 -translate-x-1/2">
+    <div className="max-w-[95vw] w-[500px] sm:aspect-[4/5]  bg-white flex items-stretch rounded-xl p-3 gap-2 shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative left-1/2 -translate-x-1/2">
       <button
         onClick={() => closeSetting()}
         className="w-[30px] aspect-square rounded-full bg-blue-100 hover:bg-blue-200 text-blue-500 flex justify-center items-center absolute right-3 top-3"
@@ -93,10 +93,10 @@ const CreateChat = () => {
         <i className="fa fa-close"></i>
       </button>
 
-      <div className="w-full h-full grid grid-rows-[1fr_1.7fr_3fr_8fr_1.5fr]">
-        <h1 className="font-semibold text-md text-center flex justify-center items-center">
+      <div className="w-full grid grid-rows-[1fr_1.7fr_3fr_8fr_1.5fr]">
+        <span className="font-semibold text-md text-center flex justify-center items-center">
           Create chat
-        </h1>
+        </span>
         <div className=" flex justify-center items-center">
           <input
             type="text"

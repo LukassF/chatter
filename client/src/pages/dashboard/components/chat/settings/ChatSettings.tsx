@@ -148,9 +148,9 @@ const ChatSettings = () => {
               <i className="fa fa-cogs"></i>
             </div>
           </div>
-          <h2 className="text-lg font-semibold text-center mt-2">
+          <span className="text-lg font-semibold text-center mt-2">
             Chat settings
-          </h2>
+          </span>
 
           <div className="flex flex-col gap-1 items-stretch [&>*]:text-left  [&>*]:rounded-md ">
             <button

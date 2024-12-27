@@ -125,9 +125,9 @@ const ImageChange = () => {
         </div>
       </div>
       <div className=" grid grid-rows-[1fr_3.5fr]">
-        <h1 className="font-semibold text-md text-center flex justify-center items-center">
+        <span className="font-semibold text-md text-center flex justify-center items-center">
           Change chat image
-        </h1>
+        </span>
         <form onSubmit={(e) => changeImage(e)} className=" grid grid-rows-2">
           <div className="form-group p-[11px] grid">
             <input

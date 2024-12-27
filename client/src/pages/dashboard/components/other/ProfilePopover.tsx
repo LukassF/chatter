@@ -33,9 +33,9 @@ const ProfilePopover = ({
               alt=""
             />
           </div>
-          <h2 className="font-semibold text-lg mt-2">
+          <span className="font-semibold text-lg mt-2">
             {current_user?.username}
-          </h2>
+          </span>
           <p className="font-light text-stone-500 text-sm -mt-1">
             {current_user?.email}
           </p>

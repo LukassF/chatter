@@ -47,7 +47,7 @@ const FoundUsersList = ({
   };
 
   return (
-    <div className="grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr] h-full w-full gap-1 py-1">
+    <div className="grid grid-rows-[1fr_1fr_1fr_1fr_1fr_1fr] w-full gap-1 py-1 ">
       {loading ? (
         <div className="w-full flex justify-center mt-3">
           <RotatingLines

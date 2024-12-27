@@ -69,11 +69,11 @@ const ChatBox: FC = () => {
             <i className="fa fa-arrow-left"></i>
           </button>
           <ChatImage item={selected_chat!} selected={true} />
-          <h4 className="m-0 p-0">
+          <span className="m-0 p-0">
             {selected_chat?.name && selected_chat?.name != '""'
               ? selected_chat?.name
               : alternateName}
-          </h4>
+          </span>
         </div>
         <button
           className="cursor-pointer text-lg  w-10 rounded-full me-2 aspect-square hover:bg-stone-100 transition-all flex items-center justify-center"

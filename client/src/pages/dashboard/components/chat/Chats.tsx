@@ -124,9 +124,9 @@ const Chats = ({ search }: { search: string | null }) => {
           ))}
         </article>
       ) : (
-        <h3 className="m-3 text-md font-medium text-muted">
+        <span className="m-3 text-md font-medium text-muted">
           No chats found...
-        </h3>
+        </span>
       )}
     </>
   );

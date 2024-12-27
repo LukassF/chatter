@@ -119,10 +119,10 @@ const Login: FC = () => {
 
   return (
     <section className="flex flex-col justify-center items-stretch w-full xs:w-[85%]">
-      <h3 className="text-center text-3xl font-bold mb-2">Log in below</h3>
-      <h6 className="mb-5 text-md font-light text-center">
+      <span className="text-center text-3xl font-bold mb-2">Log in below</span>
+      <span className="mb-5 text-md font-light text-center">
         Get back to chatting now!
-      </h6>
+      </span>
       <form onSubmit={logIn} className="flex flex-col gap-1" autoComplete="off">
         <div className="form-group p-2">
           <input

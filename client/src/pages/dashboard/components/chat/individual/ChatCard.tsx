@@ -43,12 +43,12 @@ const ChatCard = ({ item }: { item: Chat }) => {
     >
       <ChatImage item={item} />
       <div className=" p-[7px] grid grid-rows-[1fr_1.1fr]">
-        <h4
+        <span
           className="m-0 p-0 text-[14px] sm:text-[17px]"
           style={{ fontWeight: hasNotSeen() ? 600 : 400 }}
         >
           {item.name && item.name != '""' ? item.name : alternateName}
-        </h4>
+        </span>
 
         <div className="flex items-center truncate max-w-[100%] overflow-hidden">
           <span

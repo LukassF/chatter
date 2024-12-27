@@ -6,7 +6,7 @@ const NoChatSelected = () => {
         src="https://cdn-icons-png.flaticon.com/512/8699/8699638.png"
         alt="no-chat-selected-image"
       />
-      <h1 className="text-xl font-bold">No chat selected</h1>
+      <span className="text-xl font-bold">No chat selected</span>
     </div>
   );
 };

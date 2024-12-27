@@ -66,7 +66,7 @@ const PasswordChange = () => {
   }, []);
 
   return (
-    <div className="max-w-screen min-h-[200px] sm:w-[620px] text-sm sm:text-md sm:aspect-[5/2] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-3 grid-rows-[1fr_4fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">
+    <div className="max-w-screen min-h-[270px] sm:w-[620px] text-sm sm:text-md sm:aspect-[5/2] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-3 grid-rows-[1fr_4fr] shadow-[2px_2px_35px_12px_rgba(0,0,0,0.12)] relative">
       <button
         onClick={() => closeSetting()}
         className="w-[30px] aspect-square rounded-full bg-blue-100 hover:bg-blue-200 text-blue-500 flex justify-center items-center absolute right-3 top-3"
@@ -74,9 +74,9 @@ const PasswordChange = () => {
         <i className="fa fa-close"></i>
       </button>
       <div>
-        <h1 className="font-semibold text-md text-center flex justify-center items-center">
+        <span className="font-semibold text-md text-center flex justify-center items-center">
           Change password
-        </h1>
+        </span>
         <p className="text-muted text-[10px] sm:text-xs text-center mt-3 sm:mt-0">
           New password has to be at least 6 characters long
         </p>

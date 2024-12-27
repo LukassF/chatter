@@ -61,7 +61,7 @@ const ModifyProfile = () => {
 
   return (
     <>
-      <h3>Modify profile</h3>
+      <span>Modify profile</span>
 
       <form onSubmit={changeData}>
         <input
